@@ -1,0 +1,1693 @@
+{
+ "GENES": [
+  {
+   "g": "recA",
+   "scope": "cons",
+   "pathway": "Homologous recombination",
+   "plain": "An enzyme that searches the genome for matching DNA and swaps strands between the pieces — the search-and-match engine of repair.",
+   "why": "After radiation shatters the chromosome into hundreds of fragments, RecA pairs each broken end with an intact matching copy so the genome can be rebuilt accurately. Central to how D. radiodurans survives doses lethal to most life.",
+   "tags": [
+    "homologous recombination",
+    "double-strand break repair",
+    "strand exchange"
+   ],
+   "role": "RecA recombinase — ATP-dependent homologous strand exchange.",
+   "expr": {
+    "fc": 2.13,
+    "padj": 0.36,
+    "base": 27.7
+   },
+   "sp": {
+    "DR1": {
+     "locus": "DR_RS12030",
+     "len": 1092,
+     "seq": "ATGAGCAAGGACGCCACCAAAGAAATCTCCGCCCCCACCGACGCCAAGGAACGCAGCAAGGCCATCGAAACAGCCATGAGCCAGATCGAAAAGGCCTTCGGCAAGGGCTCGATCATGAAA",
+     "gc": 66.1,
+     "aa": 363
+    },
+    "DDES": {
+     "locus": "DEIDE_RS11150",
+     "len": 1068,
+     "seq": "ATGAGCAAAGACAGCACCAAGGAACTCTCCGCTCCCACCGACGCCCGCGAGCGTACCAAGGCGATCGAGACGGCCATGAGCCAGATCGAGAAGGCCTTCGGCAAGGGCAGCATCATGAAA",
+     "gc": 63,
+     "aa": 355
+    },
+    "DGOB": {
+     "locus": "DGO_RS14405",
+     "len": 1071,
+     "seq": "ATGAGCAAAGACGCCACCAAGGAAATCACTGCCCCCAGCGACGCCAAGGAACGCATGAAGGCCATCGAGACGGCCATGAGCCAGATCGAGAAGGCCTTCGGCAAGGGCAGCATCATGAAG",
+     "gc": 67.1,
+     "aa": 356
+    },
+    "DGEO": {
+     "locus": "DGEO_RS13490",
+     "len": 1077,
+     "seq": "ATGAGCAAGGACAACCCCAAGGACTTCGGTACCCCCAGTGACAGCAAGGAACGCCTCAAGGCCATCGAGACGGCCATGACCCAGATCGAAAAGGCGTTTGGCAAAGGCTCGATCATGCGC",
+     "gc": 65.3,
+     "aa": 358
+    },
+    "TTH": {
+     "locus": "TTH_RS09230",
+     "len": 1023,
+     "seq": "ATGGACGAGAGCAAGCGCAAGGCCCTGGAGAACGCCCTGAAGGCGATTGAGAAGGAGTTCGGCAAGGGGGCGGTGATGCGGCTGGGCGAGATGCCCAAGCAGCAGGTGGACGTGATCCCC",
+     "gc": 70.3,
+     "aa": 340
+    },
+    "RXY": {
+     "locus": "Rxycam_RS02285",
+     "len": 1029,
+     "seq": "TTGGACAAGAGCAAGGCGATAGACACCGCCGTATCGCAGATAGAACGTCAGTTTGGTAAGGGCTCGATCATGCGCATGGGCGACCGGGCTTCCCAGAAGGTCGCCTCCATCTCCACCGGC",
+     "gc": 65.3,
+     "aa": 342
+    },
+    "KRAD": {
+     "locus": "KRAD_RS03595",
+     "len": 1047,
+     "seq": "ATGCCCGCTCCTGCGGACCGCGAGAAGGCCCTCGACGCCGCCCTCGCAGCGATCGACAAGAACTTCGGCAAGGGCTCGGTCATGCGGCTGGGCGACGAGGTCCGTCCGCCGATCGAGGTC",
+     "gc": 69.1,
+     "aa": 348
+    },
+    "CHRO": {
+     "locus": "CHRO_RS08515",
+     "len": 1077,
+     "seq": "ATGGCTATTAACAATGATGTTGCTGGCAAGCAAAAAGCCCTGAATCTAGTCCTGAATCAAATCGAACGCAATTTCGGCAAAGGGGCGATCGTGCGCTTGGGAGATGCGACCCGAATGCGC",
+     "gc": 48.3,
+     "aa": 358
+    },
+    "TGAM": null,
+    "HALO": null,
+    "PFUR": null,
+    "EC": {
+     "locus": "b2699",
+     "len": 1062,
+     "seq": "ATGGCTATCGACGAAAACAAACAGAAAGCGTTGGCGGCAGCACTGGGCCAGATTGAGAAACAATTTGGTAAAGGCTCCATCATGCGCCTGGGTGAAGACCGTTCCATGGATGTGGAAACC",
+     "gc": 54.1,
+     "aa": 353
+    }
+   },
+   "idt": {
+    "DR1|DDES": 91.3,
+    "DR1|DGOB": 92.7,
+    "DR1|DGEO": 88.3,
+    "DR1|TTH": 66.2,
+    "DR1|RXY": 61.7,
+    "DR1|KRAD": 57.8,
+    "DR1|CHRO": 53.6,
+    "DR1|EC": 57.5,
+    "DDES|DGOB": 92.1,
+    "DDES|DGEO": 90.7,
+    "DDES|TTH": 67.6,
+    "DDES|RXY": 62,
+    "DDES|KRAD": 59.2,
+    "DDES|CHRO": 55.2,
+    "DDES|EC": 58.1,
+    "DGOB|DGEO": 89.9,
+    "DGOB|TTH": 66.2,
+    "DGOB|RXY": 61.4,
+    "DGOB|KRAD": 57.8,
+    "DGOB|CHRO": 55.3,
+    "DGOB|EC": 58.1,
+    "DGEO|TTH": 68.8,
+    "DGEO|RXY": 62.9,
+    "DGEO|KRAD": 58.3,
+    "DGEO|CHRO": 55,
+    "DGEO|EC": 60.3,
+    "TTH|RXY": 62.6,
+    "TTH|KRAD": 60.3,
+    "TTH|CHRO": 59.7,
+    "TTH|EC": 60.9,
+    "RXY|KRAD": 66.1,
+    "RXY|CHRO": 61.7,
+    "RXY|EC": 61.7,
+    "KRAD|CHRO": 63.5,
+    "KRAD|EC": 64.1,
+    "CHRO|EC": 59.5
+   }
+  },
+  {
+   "g": "ddrA",
+   "scope": "deino",
+   "pathway": "DNA-end protection",
+   "plain": "A protective protein that caps the loose single-stranded ends of broken DNA so they aren't chewed away.",
+   "why": "Right after irradiation it shields exposed DNA ends, buying time for repair. One of the first Deinococcus 'mystery genes' shown by cross-species comparison to be a Rad52-like repair factor.",
+   "tags": [
+    "double-strand break repair",
+    "single-strand DNA end protection"
+   ],
+   "role": "DdrA — Rad52-like 3′ ssDNA-end protection.",
+   "expr": {
+    "fc": 3.08,
+    "padj": 0.087,
+    "base": 38.3
+   },
+   "sp": {
+    "DR1": {
+     "locus": "DR_RS02185",
+     "len": 627,
+     "seq": "ATGAAGCTGAGCGATGTCCAGAAACGACTGCAAGCCCCGTTTCCCGCTCATACCGTGAGCTGGAAGCCCGCCGCTTTCAACGCCGAGCGCACCCGCGCCCTGCTGCTGGCTCACGTGGAC",
+     "gc": 69.1,
+     "aa": 208
+    },
+    "DDES": null,
+    "DGOB": {
+     "locus": "DGO_RS10305",
+     "len": 597,
+     "seq": "ATGAAACTGAGCGATGTCCAGAAACGACTTCAGGCCCCGTTTCCCGCTCATATGGTGGCGTGGAAGCCCGCCGCGTTCAACAAGGAACGCACCCGCGCGCTGATGCTGGCGCACATCGAC",
+     "gc": 71.7,
+     "aa": 198
+    },
+    "DGEO": {
+     "locus": "DGEO_RS07600",
+     "len": 606,
+     "seq": "ATGAAGTTGAGCGATGTTCAGAAACGACTCCAGGCCCCGTTTCCCGCTCACCTCGTGGGCTGGAAGGCCCAGGCCTTCAACAAGGAACGCACCCGCGCCCTGCTGCTGGCCTATGTCGAT",
+     "gc": 66.7,
+     "aa": 201
+    },
+    "TTH": null,
+    "RXY": null,
+    "KRAD": null,
+    "CHRO": null,
+    "TGAM": null,
+    "HALO": null,
+    "PFUR": null,
+    "EC": null
+   },
+   "idt": {
+    "DR1|DGOB": 84.3,
+    "DR1|DGEO": 83.1,
+    "DGOB|DGEO": 81.8
+   }
+  },
+  {
+   "g": "ddrB",
+   "scope": "deino",
+   "pathway": "Single-strand annealing",
+   "plain": "A protein that coats single-stranded DNA and helps matching pieces find each other and rejoin.",
+   "why": "Drives a fast, early route to rejoin broken DNA (single-strand annealing) especially important in Deinococcus.",
+   "tags": [
+    "single-strand DNA binding",
+    "single-strand annealing",
+    "double-strand break repair"
+   ],
+   "role": "DdrB — ssDNA-binding, single-strand annealing.",
+   "expr": {
+    "fc": 2.61,
+    "padj": 0.2,
+    "base": 153.3
+   },
+   "sp": {
+    "DR1": {
+     "locus": "DR_RS00370",
+     "len": 567,
+     "seq": "ATGTTGCAGATTGAATTTATCACCGACCTGGGTGCGCGGGTCACGGTGAACGTGGAGCATGAAAGCCGGTTGCTGGACGTACAGCGCCACTATGGCCGCCTGGGCTGGACCAGCGGCGAG",
+     "gc": 68.3,
+     "aa": 188
+    },
+    "DDES": null,
+    "DGOB": null,
+    "DGEO": null,
+    "TTH": null,
+    "RXY": null,
+    "KRAD": null,
+    "CHRO": null,
+    "TGAM": null,
+    "HALO": null,
+    "PFUR": null,
+    "EC": null
+   },
+   "idt": {}
+  },
+  {
+   "g": "pprA",
+   "scope": "deino",
+   "pathway": "Break-end binding / ligation",
+   "plain": "A protein that grabs the two ends of a double-strand break and helps seal them shut.",
+   "why": "Stimulates the DNA-ligase step that re-seals breaks; a signature Deinococcus radiation factor — removing it sharply lowers radiation survival.",
+   "tags": [
+    "double-strand break repair",
+    "DNA ligation"
+   ],
+   "role": "PprA — binds DSB ends, stimulates ligase.",
+   "expr": {
+    "fc": 2.86,
+    "padj": 0.23,
+    "base": 31.5
+   },
+   "sp": {
+    "DR1": {
+     "locus": "DR_RS15335",
+     "len": 903,
+     "seq": "GTGCTACCCCTGGCCTTTTTAATCTGTTCAGGGCATAATAAAGGCAGTATGGCAAGGGCTAAAGCAAAAGACCAAACGGACGGCATCTACGCCGCCTTCGACACCTTGATGAGCACGGCG",
+     "gc": 69.5,
+     "aa": 300
+    },
+    "DDES": null,
+    "DGOB": null,
+    "DGEO": null,
+    "TTH": null,
+    "RXY": null,
+    "KRAD": null,
+    "CHRO": null,
+    "TGAM": null,
+    "HALO": null,
+    "PFUR": null,
+    "EC": null
+   },
+   "idt": {}
+  },
+  {
+   "g": "uvrA",
+   "scope": "cons",
+   "pathway": "Nucleotide excision repair",
+   "plain": "The damage scout of a repair crew that cuts bulky lesions out of DNA.",
+   "why": "Recognizes UV- and chemical-damaged spots and flags them for removal — first step of nucleotide excision repair.",
+   "tags": [
+    "nucleotide excision repair",
+    "damage recognition"
+   ],
+   "role": "UvrA — UvrABC damage recognition (2 paralogs).",
+   "expr": {
+    "fc": 1.84,
+    "padj": 0.39,
+    "base": 61.7,
+    "note": "two paralogs in R1 (+1.84, +2.39)"
+   },
+   "sp": {
+    "DR1": {
+     "locus": "DR_RS09060",
+     "len": 3051,
+     "seq": "ATGCAAGACAAACTCATCGTGCGCGGCGCCCGGGAACACAACCTCAAGGACATCACCGTGGAGCTGCCCCGCGACCGCTTCGTGGTGATTACCGGCGTGTCGGGCAGCGGCAAGTCCACG",
+     "gc": 65.7,
+     "aa": 1016
+    },
+    "DDES": {
+     "locus": "DEIDE_RS07360",
+     "len": 3015,
+     "seq": "TTGCAGAACAACCTGATCGTGCGCGGCGCACGCGAACACAACCTGAAGAACATCACGGTCGAGCTTCCCCGCGACCAGTTCGTGGTGATTACTGGCGTCTCGGGAAGCGGCAAAAGCACG",
+     "gc": 63.1,
+     "aa": 1004
+    },
+    "DGOB": {
+     "locus": "DGO_RS05120",
+     "len": 3063,
+     "seq": "TTGCAGAACAACCTGATCGTGCGCGGCGCGCGGGAACACAACCTCAAGGACATCACGGTGGAGCTGCCGCGCGACCGTTTCGTGGTGATCACCGGCGTGTCGGGCAGCGGCAAGAGCACG",
+     "gc": 68.5,
+     "aa": 1020
+    },
+    "DGEO": {
+     "locus": "DGEO_RS06180",
+     "len": 3015,
+     "seq": "TTGCAAAACCAGCATCTGATTGTGCGCGGGGCACGGGAACACAACCTCAAAAACGTGACGGTGGAGTTGCCGCGTGACCGGTTCGTGGTGATCACCGGGGTGTCGGGCAGCGGCAAGAGC",
+     "gc": 64.8,
+     "aa": 1004
+    },
+    "TTH": {
+     "locus": "TTH_RS07290",
+     "len": 2859,
+     "seq": "ATGGACCGCATCGTCATCCGGGGCGCTCGGGAGCACAACCTGAAGAACATCAGCCTGGAGCTTCCCCGGGGCAAGTTCATCGTCATCACCGGGGTTTCCGGCTCGGGGAAAAGCACCTTG",
+     "gc": 68.2,
+     "aa": 952
+    },
+    "RXY": {
+     "locus": "Rxycam_RS04815",
+     "len": 2850,
+     "seq": "ATAGCCGAGAGCCACATAGTCGTCCGGGGGGCGCGCGAGCACAACCTGAAGAACGTCACCGTCTCCATCCCGCGCGATGTGCTGGTCGTGGTCACCGGGCTCTCCGGTAGCGGGAAGTCG",
+     "gc": 67.6,
+     "aa": 949
+    },
+    "KRAD": {
+     "locus": "KRAD_RS19350",
+     "len": 2895,
+     "seq": "GTGGCCTCCGCGCGGGTGGCCGACGACCGCCTGGTCGTGCGCGGCGCGCGCGAGCACAACCTCAAGAACGTCTCCGTCGACCTGCCCCGCGACAGCCTCGTCGTCTTCACCGGCCTGTCC",
+     "gc": 71.1,
+     "aa": 964
+    },
+    "CHRO": {
+     "locus": "CHRO_RS24810",
+     "len": 3024,
+     "seq": "ATGAATTACCGTCCCGATGCAAAGATTGAAGTCACTGAATCCGCAAACGGGCATCATGCAGATACTTCTAACCCTAATAGCCAAAATACCATCCGCATTCGCGGCGCGAGACAGCATAAT",
+     "gc": 46.6,
+     "aa": 1007
+    },
+    "TGAM": null,
+    "HALO": {
+     "locus": "VNG_RS10310",
+     "len": 2949,
+     "seq": "ATGAGCGAAGAGTACATCGAGGTCCGTGGCGCCGAAGAACACAACCTCACGGACCTCGACGTGGAGCTTCCCCGCGAGTCGCTGAACGTCGTCACGGGGCTGTCCGGATCCGGGAAGTCG",
+     "gc": 67.7,
+     "aa": 982
+    },
+    "PFUR": null,
+    "EC": {
+     "locus": "b4058",
+     "len": 2823,
+     "seq": "ATGGATAAGATCGAAGTTCGGGGCGCCCGCACCCATAATCTCAAAAACATCAACCTCGTTATCCCCCGCGACAAGCTCATTGTCGTGACCGGGCTTTCGGGTTCTGGCAAATCCTCGCTC",
+     "gc": 56.1,
+     "aa": 940
+    }
+   },
+   "idt": {
+    "DR1|DDES": 87.9,
+    "DR1|DGOB": 86.4,
+    "DR1|DGEO": 85.3,
+    "DR1|TTH": 71.2,
+    "DR1|RXY": 58.6,
+    "DR1|KRAD": 59.1,
+    "DR1|CHRO": 53.3,
+    "DR1|HALO": 56.1,
+    "DR1|EC": 58,
+    "DDES|DGOB": 87.8,
+    "DDES|DGEO": 87.5,
+    "DDES|TTH": 71.3,
+    "DDES|RXY": 60.2,
+    "DDES|KRAD": 59.4,
+    "DDES|CHRO": 54,
+    "DDES|HALO": 56.7,
+    "DDES|EC": 57.1,
+    "DGOB|DGEO": 87.2,
+    "DGOB|TTH": 71,
+    "DGOB|RXY": 60.2,
+    "DGOB|KRAD": 59.9,
+    "DGOB|CHRO": 54.6,
+    "DGOB|HALO": 56.4,
+    "DGOB|EC": 58.1,
+    "DGEO|TTH": 71.4,
+    "DGEO|RXY": 60.9,
+    "DGEO|KRAD": 59.2,
+    "DGEO|CHRO": 54.1,
+    "DGEO|HALO": 54.5,
+    "DGEO|EC": 57.6,
+    "TTH|RXY": 62,
+    "TTH|KRAD": 60.6,
+    "TTH|CHRO": 58.8,
+    "TTH|HALO": 58.8,
+    "TTH|EC": 59.3,
+    "RXY|KRAD": 64.1,
+    "RXY|CHRO": 59.2,
+    "RXY|HALO": 58.2,
+    "RXY|EC": 58.7,
+    "KRAD|CHRO": 58.3,
+    "KRAD|HALO": 56.1,
+    "KRAD|EC": 57.1,
+    "CHRO|HALO": 52.1,
+    "CHRO|EC": 56.1,
+    "HALO|EC": 53.8
+   }
+  },
+  {
+   "g": "uvrB",
+   "scope": "cons",
+   "pathway": "Nucleotide excision repair",
+   "plain": "The verifier and unwinding partner of UvrA that confirms a lesion and sets up the cut.",
+   "why": "Works with UvrA to excise damaged DNA so it can be resynthesized cleanly.",
+   "tags": [
+    "nucleotide excision repair",
+    "helicase"
+   ],
+   "role": "UvrB — UvrABC helicase / lesion verification.",
+   "expr": {
+    "fc": 2.43,
+    "padj": 0.16,
+    "base": 57.6
+   },
+   "sp": {
+    "DR1": {
+     "locus": "DR_RS11695",
+     "len": 2016,
+     "seq": "ATGCTCAAAGTCCGCTCCGAATTCAAACCGTCCGGCGACCAGCCCACCGCCATCGCGTCCCTGGTGGACGGACTGGAAAGTGGGCTGAGGTATCAGACCCTGCTGGGCGCGACGGGCACC",
+     "gc": 64.6,
+     "aa": 671
+    },
+    "DDES": {
+     "locus": "DEIDE_RS01770",
+     "len": 2016,
+     "seq": "ATGCTCAAGGTCAAATCCGCATTTACCCCGTCTGGCGACCAGCCCACTGCGATCCGTTCCCTGGTGGACGGCCTGGACAGCGGCCTGCGCTTCCAGACGCTGCTGGGAGCCACCGGTACC",
+     "gc": 63.7,
+     "aa": 671
+    },
+    "DGOB": {
+     "locus": "DGO_RS04295",
+     "len": 2016,
+     "seq": "ATGTTAAGCGTCAAGTCCGAATTCACGCCGTCGGGAGACCAGCCGACCGCCATCCGATCGCTCGTGGACGGCCTGGACTCGGGCCTGCGCTTCCAGACGCTGCTGGGCGCGACCGGCACC",
+     "gc": 66.9,
+     "aa": 671
+    },
+    "DGEO": {
+     "locus": "DGEO_RS12215",
+     "len": 2031,
+     "seq": "ATGCTGAAGGTCAAGTCTGACTTCAAACCGTCCGGTGACCAGCCCACCGCTATCCGCAGCCTGGTCGACGGTCTAGCGTCGGGCCTGCGGTTTCAGACGCTGCTGGGGGCGACGGGCACG",
+     "gc": 64.9,
+     "aa": 676
+    },
+    "TTH": {
+     "locus": "TTH_RS09595",
+     "len": 1998,
+     "seq": "ATGACCTTCCGCTACCGGGGGCCAAGCCCCAAGGGGGACCAGCCCAAGGCCATCGCCGGGCTCGTGGAGGCCTTGAGGGACGGGGAGCGCTTCGTCACCCTCCTCGGGGCCACGGGCACG",
+     "gc": 66.1,
+     "aa": 665
+    },
+    "RXY": {
+     "locus": "Rxycam_RS04835",
+     "len": 2007,
+     "seq": "ATCGGAACACCTAGCAGCAGCGGCTTCCAGGTAAGCAGCGAGTACCGGCCCACCGGCGACCAGCCGCAGGCCATAGAGCGCCTCGCAGAGGGGGTGGAATCCGGGCTGCGGGCGCAGACG",
+     "gc": 66.6,
+     "aa": 668
+    },
+    "KRAD": {
+     "locus": "KRAD_RS19340",
+     "len": 2127,
+     "seq": "ATGCGGCCGACGACAGACATCGAGCGCCGGGTGGCGCCCTTCGAGGTGGTCTCCGAGTTCTCCCCCTCCGGGGACCAGCCCACGGCCATCGCCGAGCTCGCCCGGCGGGTGAACGCCGGG",
+     "gc": 69.9,
+     "aa": 708
+    },
+    "CHRO": {
+     "locus": "CHRO_RS07305",
+     "len": 1998,
+     "seq": "ATGATGCAATTTAGCCTTCAAGCGCCGTTTGCACCTACAGGCGATCAACCGTCGGCGATCGCTCAACTTGTAAAGTCCATTCAAGCCGGACATCGTTACCAAACTTTACTTGGAGCTACG",
+     "gc": 48,
+     "aa": 665
+    },
+    "TGAM": null,
+    "HALO": {
+     "locus": "VNG_RS09355",
+     "len": 2070,
+     "seq": "ATGAGTGACGCCAGCGGCCCCCTCCAGCCGGACCGACCCGAGGCCGACGTGCCGTTCCGCGTCGAAGCGCCCTTCGACCCGGCGGGCGACCAGCCCGACGCCATCGCGGAACTGGTCGCG",
+     "gc": 67.9,
+     "aa": 689
+    },
+    "PFUR": null,
+    "EC": {
+     "locus": "b0779",
+     "len": 2022,
+     "seq": "ATGAGTAAACCGTTCAAACTGAATTCCGCTTTTAAACCTTCTGGCGATCAGCCAGAGGCGATTCGACGTCTCGAAGAGGGGCTGGAAGATGGCCTGGCGCACCAGACGTTACTTGGCGTG",
+     "gc": 53.6,
+     "aa": 673
+    }
+   },
+   "idt": {
+    "DR1|DDES": 90,
+    "DR1|DGOB": 90.8,
+    "DR1|DGEO": 86.7,
+    "DR1|TTH": 65.7,
+    "DR1|RXY": 59.1,
+    "DR1|KRAD": 58,
+    "DR1|CHRO": 54.9,
+    "DR1|HALO": 55.1,
+    "DR1|EC": 55.6,
+    "DDES|DGOB": 91.7,
+    "DDES|DGEO": 87.9,
+    "DDES|TTH": 65,
+    "DDES|RXY": 58.5,
+    "DDES|KRAD": 56.2,
+    "DDES|CHRO": 55.3,
+    "DDES|HALO": 54.2,
+    "DDES|EC": 56.6,
+    "DGOB|DGEO": 87.8,
+    "DGOB|TTH": 65,
+    "DGOB|RXY": 58.7,
+    "DGOB|KRAD": 56,
+    "DGOB|CHRO": 54.6,
+    "DGOB|HALO": 53.7,
+    "DGOB|EC": 55.7,
+    "DGEO|TTH": 66.3,
+    "DGEO|RXY": 59.6,
+    "DGEO|KRAD": 57.5,
+    "DGEO|CHRO": 56.1,
+    "DGEO|HALO": 54.6,
+    "DGEO|EC": 56,
+    "TTH|RXY": 59.7,
+    "TTH|KRAD": 57.7,
+    "TTH|CHRO": 57,
+    "TTH|HALO": 55.5,
+    "TTH|EC": 55.6,
+    "RXY|KRAD": 62.3,
+    "RXY|CHRO": 62,
+    "RXY|HALO": 55.1,
+    "RXY|EC": 59.4,
+    "KRAD|CHRO": 57.3,
+    "KRAD|HALO": 54.4,
+    "KRAD|EC": 56.9,
+    "CHRO|HALO": 53.1,
+    "CHRO|EC": 59.7,
+    "HALO|EC": 53.3
+   }
+  },
+  {
+   "g": "ddrC",
+   "scope": "deino",
+   "pathway": "Nucleoid protection",
+   "plain": "A protein that packs and protects the genome while the cell is recovering.",
+   "why": "Helps condense and shield DNA during repair, limiting further damage.",
+   "tags": [
+    "nucleoid protection",
+    "genome organization"
+   ],
+   "role": "DdrC — nucleoid-associated genome protection.",
+   "expr": null,
+   "sp": {
+    "DR1": {
+     "locus": "DR_RS00015",
+     "len": 696,
+     "seq": "ATGAAGAACGCTCCGCTGACCCTCAATTTCGGCTCCGTGCGGCTGCCTGTCAGCGCGGACGGTTTGCTTCACGCCCCCACCGCCCAGCAGCAGCTCGGGCTCACCCAAAGCTGGGAAGCG",
+     "gc": 71.1,
+     "aa": 231
+    },
+    "DDES": {
+     "locus": "DEIDE_RS13290",
+     "len": 699,
+     "seq": "ATGAAGAGCCTTCCTAACACCCTTGACTTTGGCAACGTCAGGCTGCCCGTCAGTGCGGACGGCCTGCTGCACGCCACGACCGCCCTGGCCCATCTGGGCCTCGAAACTCCCGAACAGTGG",
+     "gc": 68.2,
+     "aa": 232
+    },
+    "DGOB": {
+     "locus": "DGO_RS00365",
+     "len": 699,
+     "seq": "ATGAAGAACGCCTCTCTGACCCTGGAATTCGGCACGGTCCGCCTGCCTGTCAGCGCGGACGGTCTCCTGCATGCGCCCACGGCCCTGGGCCAGCTGGGCCTCGACCCGGCCGACTGGACC",
+     "gc": 75,
+     "aa": 232
+    },
+    "DGEO": {
+     "locus": "DGEO_RS02820",
+     "len": 690,
+     "seq": "ATGAAGACCGCGCCCATCACGCTTGAATTCGGCACGCAGCGGCTGCCCGCCAGCGCGGATGGTTTGCTGCATGCCGCGACTGCCCTGAAGACTCTGGGCGTGCCCCTGCCGGAGGACTGG",
+     "gc": 70.7,
+     "aa": 229
+    },
+    "TTH": null,
+    "RXY": null,
+    "KRAD": null,
+    "CHRO": null,
+    "TGAM": null,
+    "HALO": null,
+    "PFUR": null,
+    "EC": null
+   },
+   "idt": {
+    "DR1|DDES": 68.4,
+    "DR1|DGOB": 73.2,
+    "DR1|DGEO": 65.9,
+    "DDES|DGOB": 75,
+    "DDES|DGEO": 75.1,
+    "DGOB|DGEO": 74.2
+   }
+  },
+  {
+   "g": "ddrD",
+   "scope": "deino",
+   "pathway": "Radiation-response (uncharacterized)",
+   "plain": "A strongly radiation-induced protein whose exact job is still unknown.",
+   "why": "Switches on hard after irradiation, making it a prime candidate for an uncharacterized repair function — the kind this atlas exists to investigate.",
+   "tags": [
+    "radiation-induced",
+    "uncharacterized"
+   ],
+   "role": "DdrD — RDR-induced; role being characterized.",
+   "expr": null,
+   "sp": {
+    "DR1": {
+     "locus": "DR_RS01690",
+     "len": 597,
+     "seq": "ATGGATACCCTGAAAAAAGCTGGAACGATGCTCGCCCACCTCGACCTCTTTCACTCGATGCTCGACCTGCGGCGGCTGCTGCAACTCGCGGCGTACATGAAGGAGCGCGGCGACCGGGCC",
+     "gc": 70.5,
+     "aa": 198
+    },
+    "DDES": null,
+    "DGOB": null,
+    "DGEO": null,
+    "TTH": null,
+    "RXY": null,
+    "KRAD": null,
+    "CHRO": null,
+    "TGAM": null,
+    "HALO": null,
+    "PFUR": null,
+    "EC": null
+   },
+   "idt": {}
+  },
+  {
+   "g": "irrE",
+   "scope": "deino",
+   "pathway": "Master regulation",
+   "plain": "The master switch that turns the whole radiation-response program on.",
+   "why": "After damage, IrrE cuts a repressor (DdrO), releasing the entire radiation/desiccation gene set at once. A top-level controller found in Deinococcus and relatives.",
+   "tags": [
+    "regulation",
+    "master switch",
+    "protease"
+   ],
+   "role": "IrrE/PprI — protease master regulator.",
+   "expr": null,
+   "sp": {
+    "DR1": {
+     "locus": "DR_RS00860",
+     "len": 987,
+     "seq": "GTGCCCAGTGCCAACGTCAGCCCCCCTTGCCCCTCTGGGGTAAGGGGCGGGGGGATGGGGCCAAAAGCTAAAGCTGAAGCCTCCAAGCCCCACCCCCAAATCCCTGTTAAGCTCCCATTC",
+     "gc": 69.2,
+     "aa": 328
+    },
+    "DDES": null,
+    "DGOB": null,
+    "DGEO": null,
+    "TTH": null,
+    "RXY": null,
+    "KRAD": null,
+    "CHRO": null,
+    "TGAM": null,
+    "HALO": null,
+    "PFUR": null,
+    "EC": null
+   },
+   "idt": {}
+  },
+  {
+   "g": "recN",
+   "scope": "cons",
+   "pathway": "Break-end tethering",
+   "plain": "A protein that holds the two ends of a break together so they don't drift apart.",
+   "why": "Tethers and aligns double-strand break ends so repair enzymes can rejoin them.",
+   "tags": [
+    "double-strand break repair",
+    "DNA end tethering"
+   ],
+   "role": "RecN — SMC-like DNA-end tethering.",
+   "expr": null,
+   "sp": {
+    "DR1": {
+     "locus": "DR_RS07565",
+     "len": 1695,
+     "seq": "GTGACCCGCAAGGCCCGTACCCCCAAAGCCGCCCCCGTTCCCGAAGCTGTCGCTGTGGTCGAGCCGCCGCCCCCGGACGCCGCACCCACCGGCCCCCGGCTCTCGCGGCTGGAAATTCGC",
+     "gc": 70.2,
+     "aa": 564
+    },
+    "DDES": null,
+    "DGOB": {
+     "locus": "DGO_RS07550",
+     "len": 1689,
+     "seq": "GTGACCCGCAAGGCCCGCACCCCCACCCAGGACGCCCCCGCCCGGCGGTCCACGCCTCCTTCCGCCGTGTCCGGCCCCGCGCCGGGGCCCGCCGGTCCCGGCATCGCCCGGCTGGAGGTC",
+     "gc": 74.4,
+     "aa": 562
+    },
+    "DGEO": {
+     "locus": "DGEO_RS08655",
+     "len": 1668,
+     "seq": "GTGACCCGCAAGGCCCGTGCCGCCACCGCACCACCCGTGCCGCCTACCCCAGCTCCGGCGGGACCGCAGCTGTCCCGATTGGAGGTCCGCAATCTCGCCACCATCCGTGACCTGACGCTG",
+     "gc": 69.7,
+     "aa": 555
+    },
+    "TTH": null,
+    "RXY": {
+     "locus": "Rxycam_RS02435",
+     "len": 1707,
+     "seq": "GTGGCGAGCGGTGCGGAGGACCTTTCTGTAGTGCTCTCGGAGATCTCCGTTCGGAACGTGGCCCTGATCGAGTCCGCCACCCTGCGGCTCTCGCCGGGCCTGAACGCGGTGACGGGGGAG",
+     "gc": 73.5,
+     "aa": 568
+    },
+    "KRAD": {
+     "locus": "KRAD_RS18275",
+     "len": 1836,
+     "seq": "GTGATCGAGGAGATCCGCATCCGCTCCCTGGGGGTCATCCGCGACGCCCGACTGCCCCTGGGGCCGGGGCTGACCGTCATCACCGGTGAGACCGGCGCGGGCAAGACGATGGTCGTCACC",
+     "gc": 78.2,
+     "aa": 611
+    },
+    "CHRO": {
+     "locus": "CHRO_RS03830",
+     "len": 1905,
+     "seq": "ATGTTAATCTCCCTCCAGATTGAAAACTTTGCTTTAATTGACCAGCTGGAGTTGGAATTCGGCACTGGTCTGAATGTCCTCACAGGCGAAACTGGTGCTGGTAAATCGATTATTTTGGAT",
+     "gc": 48.6,
+     "aa": 634
+    },
+    "TGAM": null,
+    "HALO": null,
+    "PFUR": null,
+    "EC": {
+     "locus": "b2616",
+     "len": 1662,
+     "seq": "ATGTTGGCACAACTGACCATCAGCAACTTTGCTATCGTTCGTGAGCTTGAGATTGATTTTCATAGCGGCATGACCGTAATAACTGGCGAGACCGGCGCGGGTAAATCTATTGCAATAGAT",
+     "gc": 51.8,
+     "aa": 553
+    }
+   },
+   "idt": {
+    "DR1|DGOB": 72.2,
+    "DR1|DGEO": 73,
+    "DR1|RXY": 35.6,
+    "DR1|KRAD": 36.9,
+    "DR1|CHRO": 33.7,
+    "DR1|EC": 32.4,
+    "DGOB|DGEO": 72.6,
+    "DGOB|RXY": 35.9,
+    "DGOB|KRAD": 37.7,
+    "DGOB|CHRO": 33.5,
+    "DGOB|EC": 30.9,
+    "DGEO|RXY": 37.5,
+    "DGEO|KRAD": 37.5,
+    "DGEO|CHRO": 34.2,
+    "DGEO|EC": 32.5,
+    "RXY|KRAD": 42.8,
+    "RXY|CHRO": 32.7,
+    "RXY|EC": 34.4,
+    "KRAD|CHRO": 31.4,
+    "KRAD|EC": 34.2,
+    "CHRO|EC": 34.5
+   }
+  },
+  {
+   "g": "recF",
+   "scope": "cons",
+   "pathway": "RecA loading (RecFOR)",
+   "plain": "A helper that loads the RecA repair enzyme onto DNA at the right spot.",
+   "why": "Part of the RecFOR pathway that starts recombination at single-strand gaps.",
+   "tags": [
+    "homologous recombination",
+    "RecA loading"
+   ],
+   "role": "RecF — RecFOR-pathway RecA loading.",
+   "expr": null,
+   "sp": {
+    "DR1": {
+     "locus": "DR_RS05615",
+     "len": 1080,
+     "seq": "ATGGGGGATGTGCGTCTCTCGGCCCTGTCTACCCTGAATTACCGGAATCTTGCGCCTGGGACGCTGAATTTCCCGGAAGGCGTGACCGGGATTTATGGGGAGAACGGAGCTGGCAAGACC",
+     "gc": 69.3,
+     "aa": 359
+    },
+    "DDES": {
+     "locus": "DEIDE_RS08250",
+     "len": 1092,
+     "seq": "ATGCGAGGCGTGCAACTGGAGTCGCTGTCCACCCTCAATTACCGGAATCTCGCGCCCTGTACGCTGAGCTTCCCGGCTGGGGTGACTGGTGTCTTCGGCGAGAACGGCGCCGGCAAGACC",
+     "gc": 69.7,
+     "aa": 363
+    },
+    "DGOB": {
+     "locus": "DGO_RS11035",
+     "len": 1071,
+     "seq": "ATCGGGGGCGTGCTGCTCTCGGGCCTGTCTACCCTGAACTACCGGAACCTCGCGCCGGACACGCTGGAATTTCCGGCCGGCGTGACCGGTGTGTTCGGCGAGAACGGCGCGGGCAAGACC",
+     "gc": 72.8,
+     "aa": 356
+    },
+    "DGEO": {
+     "locus": "DGEO_RS10835",
+     "len": 1077,
+     "seq": "ATGTCCGGTGTGCAGCTCTCGTCCCTCTCCACCCTGAATTACCGGAATCTCGCGCCCGGCACGCTTCATTTTCCGGCGGGCGTGACGGGCGTGTTTGGGGAAAACGGAGCGGGCAAGACA",
+     "gc": 68.8,
+     "aa": 358
+    },
+    "TTH": {
+     "locus": "TTH_RS01400",
+     "len": 1032,
+     "seq": "ATGCGGCTTCTCCTCTTCCGGCAACGGAACTTCCGCAACCTGGCCCTGGAGGCCTACCGCCCCCCGCCGGGCCTTTCCGCCCTGGTGGGGGCCAACGCCCAGGGGAAGACGAGCCTCCTC",
+     "gc": 74.8,
+     "aa": 343
+    },
+    "RXY": {
+     "locus": "Rxycam_RS10180",
+     "len": 1125,
+     "seq": "TTGAGCGCCTACATCCGGGCCGTCCGGCTCGTGAACTTCCGGAACTACGCCGGCGCGACGGCCCTCCTCGCGCCGGGGCTGAACGTGCTCGTCGGGGAGAACGCCCAGGGCAAGACGAAC",
+     "gc": 67.5,
+     "aa": 374
+    },
+    "KRAD": {
+     "locus": "KRAD_RS11175",
+     "len": 1176,
+     "seq": "GTGCACGTCGCGCACCTCTCGCTCGTCGACTACCGCTCGTACCCGACCCTCGAGCTGGACCTGCGTCCGGGGACGACGACCTTCGTCGGCCTGAACGGGCAGGGCAAGACCAACCTGGTC",
+     "gc": 75.7,
+     "aa": 391
+    },
+    "CHRO": {
+     "locus": "CHRO_RS19880",
+     "len": 1104,
+     "seq": "TTGAAGCAATTTCGGAATTATCAGGAGCAGCGAGTTGATTTCGTTGCTCCTAAAACAATATTGGTGGGTAATAACGCTCAGGGTAAATCCAATTTATTAGAAGCAGTGGAATTGCTGGCA",
+     "gc": 46.9,
+     "aa": 367
+    },
+    "TGAM": null,
+    "HALO": null,
+    "PFUR": null,
+    "EC": {
+     "locus": "b3700",
+     "len": 1074,
+     "seq": "ATGTCCCTCACCCGCTTGTTGATCCGCGATTTCCGCAACATTGAAACCGCGGATCTCGCCTTATCTCCCGGCTTTAACTTTCTGGTAGGTGCCAACGGCAGTGGCAAAACCAGCGTGCTG",
+     "gc": 55,
+     "aa": 357
+    }
+   },
+   "idt": {
+    "DR1|DDES": 80.2,
+    "DR1|DGOB": 84.3,
+    "DR1|DGEO": 83,
+    "DR1|TTH": 42.6,
+    "DR1|RXY": 34,
+    "DR1|KRAD": 41.2,
+    "DR1|CHRO": 34,
+    "DR1|EC": 29.1,
+    "DDES|DGOB": 86.2,
+    "DDES|DGEO": 85.2,
+    "DDES|TTH": 42,
+    "DDES|RXY": 34.4,
+    "DDES|KRAD": 40.2,
+    "DDES|CHRO": 34.7,
+    "DDES|EC": 29.1,
+    "DGOB|DGEO": 87.4,
+    "DGOB|TTH": 42.9,
+    "DGOB|RXY": 33.7,
+    "DGOB|KRAD": 42.1,
+    "DGOB|CHRO": 34,
+    "DGOB|EC": 31.7,
+    "DGEO|TTH": 42.3,
+    "DGEO|RXY": 34.4,
+    "DGEO|KRAD": 39.4,
+    "DGEO|CHRO": 33,
+    "DGEO|EC": 30.8,
+    "TTH|RXY": 35,
+    "TTH|KRAD": 39.9,
+    "TTH|CHRO": 37.3,
+    "TTH|EC": 28.9,
+    "RXY|KRAD": 34.2,
+    "RXY|CHRO": 33,
+    "RXY|EC": 30.3,
+    "KRAD|CHRO": 35.4,
+    "KRAD|EC": 29.1,
+    "CHRO|EC": 25.5
+   }
+  },
+  {
+   "g": "recQ",
+   "scope": "cons",
+   "pathway": "Recombination processing",
+   "plain": "A helicase — a motor that unwinds the DNA double helix.",
+   "why": "Opens and untangles DNA and repair intermediates so they can be processed correctly.",
+   "tags": [
+    "helicase",
+    "homologous recombination"
+   ],
+   "role": "RecQ — helicase, intermediate processing.",
+   "expr": null,
+   "sp": {
+    "DR1": {
+     "locus": "DR_RS06640",
+     "len": 2475,
+     "seq": "ATGACCGCTGCTCCTGCCGCCCTCCACGACCGCGCCCTGCATCTGCTCCAGACCATCTGGGGCTATCCGGCCTTCCGGGGCGTGCAGGGCGAGATCGTGCAGCAGGTGGCGGAAGGTGGC",
+     "gc": 68.4,
+     "aa": 824
+    },
+    "DDES": {
+     "locus": "DEIDE_RS06535",
+     "len": 2196,
+     "seq": "ATGACTGCTGTCTCCCCCGCTTCACCTACCCAAGCCCTGGAGGTCCTGAACCGGGTCTGGGGTTACAGCGCGTTCCGCGGCGTTCAGGCCGAAATCGTCCGGACAGTGACCGATGGGGGC",
+     "gc": 65.6,
+     "aa": 731
+    },
+    "DGOB": {
+     "locus": "DGO_RS09035",
+     "len": 1932,
+     "seq": "ATGCAGGAGTGTGAAAAATCCCCTGTTCAGGCCTGGAATGGTCCATCGGGGGGCCTGAAGGCGAAGCGGAAGACCTGCGGCAGCCTGCCTCCACGCCGGGCGGTGGCCGGGGGCGAGGAA",
+     "gc": 71.9,
+     "aa": 644
+    },
+    "DGEO": null,
+    "TTH": null,
+    "RXY": null,
+    "KRAD": null,
+    "CHRO": {
+     "locus": "CHRO_RS26520",
+     "len": 2127,
+     "seq": "ATGCCTCGGTTTCAATCCCTGGAAGCAGCACTCAAACACTACTTCGGCTACGATAGCTTCCGCCCTGGACAAAAACAAATCGTCGAACAAGCGCTGCAAAATCGGGATCAACTGATTGTC",
+     "gc": 43.3,
+     "aa": 708
+    },
+    "TGAM": null,
+    "HALO": null,
+    "PFUR": null,
+    "EC": {
+     "locus": "b3822",
+     "len": 1830,
+     "seq": "GTGGCGCAGGCGGAAGTGTTGAATCTGGAGTCCGGAGCTAAACAGGTTTTACAAGAAACCTTTGGCTACCAACAGTTTCGCCCCGGCCAGGAAGAAATTATCGACACTGTGCTTTCCGGC",
+     "gc": 55.1,
+     "aa": 609
+    }
+   },
+   "idt": {
+    "DR1|DDES": 74,
+    "DR1|DGOB": 72.7,
+    "DR1|CHRO": 41.5,
+    "DR1|EC": 47.1,
+    "DDES|DGOB": 73.6,
+    "DDES|CHRO": 41.5,
+    "DDES|EC": 47.3,
+    "DGOB|CHRO": 40.7,
+    "DGOB|EC": 47,
+    "CHRO|EC": 47
+   }
+  },
+  {
+   "g": "ruvB",
+   "scope": "cons",
+   "pathway": "Holliday-junction resolution",
+   "plain": "A molecular motor that moves the point where two DNA strands cross over.",
+   "why": "Drives the late step of recombination that resolves crossed-over DNA into two clean copies.",
+   "tags": [
+    "homologous recombination",
+    "Holliday junction"
+   ],
+   "role": "RuvB — Holliday-junction branch migration.",
+   "expr": null,
+   "sp": {
+    "DR1": {
+     "locus": "DR_RS03100",
+     "len": 1002,
+     "seq": "ATGACTGCCCCCGAGAATCTGGACGCCGCCCTGCGTCCCAAGACCCTGACCGAGTACGTCGGGCAGGAAAAGCTCAAGGACAAGCTGGGCGTGTACCTGCAAGCGGCCCGTGGGCGCCGT",
+     "gc": 66.8,
+     "aa": 333
+    },
+    "DDES": {
+     "locus": "DEIDE_RS10550",
+     "len": 1005,
+     "seq": "ATGACTGATCCCGCTACCCATCTGGACGCCGCCCTGCGTCCGAAAACCCTGACAGAGTATGTGGGGCAGGAAAAGCTGAAGGACAAGCTTGGGGTCTATCTGCAAGCCGCCAAGGGCCGG",
+     "gc": 65.2,
+     "aa": 334
+    },
+    "DGOB": {
+     "locus": "DGO_RS12715",
+     "len": 999,
+     "seq": "ATGACCGAGCCGCTCGACGCCGCATTGCGGCCCAAAGGGCTGTCCGAATACGTCGGGCAGGAAAAACTCAAGGACAAGCTGGGCGTGTATCTCCAGGCCGCCAAGGGCCGCCGCGAGGCG",
+     "gc": 70.1,
+     "aa": 332
+    },
+    "DGEO": {
+     "locus": "DGEO_RS04675",
+     "len": 996,
+     "seq": "ATGACCGAACCGCTCGACGCCGCCCTGCGCCCCAAGAGCCTTGCGGAGTATGTGGGTCAGGCGCGGCTCAAGGAAAAACTGGGGGTGTATCTCCAGGCTGCCAAGGGCCGCAAAGAGGCC",
+     "gc": 64.8,
+     "aa": 331
+    },
+    "TTH": {
+     "locus": "TTH_RS02120",
+     "len": 975,
+     "seq": "GTGGAAGACCTCGCCCTTAGGCCCAAGACCCTGGACGAGTACATCGGCCAGGAGCGCCTGAAGCAAAAGCTCCGGGTCTACCTCGAGGCGGCCAAGGCCCGAAAAGAGCCCTTGGAGCAC",
+     "gc": 70.1,
+     "aa": 324
+    },
+    "RXY": {
+     "locus": "Rxycam_RS01810",
+     "len": 1068,
+     "seq": "ATGGAGGAGATGGACGACTTCACCGTGCGCCGGGGAGAGCGCGAGGATATAACCGGGGCCGCCGGGCCGCCCGGGGAGCGGCCGCTGGACCCGGCGGCCTTCGAGGAGGACGACGAGCCC",
+     "gc": 69.5,
+     "aa": 355
+    },
+    "KRAD": {
+     "locus": "KRAD_RS18770",
+     "len": 1068,
+     "seq": "ATGGAGGACCGGCTGGTGACCACCGGCGCCGACGAGCGCGAACGCGCGGCCGAGTCGGCGCTGCGTCCGCACGGCCTCGACGAGTTCGTCGGGCAGAAGGTCGTGCGCGAGCAGCTCGCC",
+     "gc": 75.5,
+     "aa": 355
+    },
+    "CHRO": {
+     "locus": "CHRO_RS02115",
+     "len": 1116,
+     "seq": "ATGGCAATTATCTCCTCTAAACAACCGTCAGAACCTTCTAAGCCTGCAAAAAAGCAACAGAAGAAACCTCAACCTCAGCCTGTCATAGAGGATTTGTTGCAACCGCAGGCAACTGTGGAG",
+     "gc": 48,
+     "aa": 371
+    },
+    "TGAM": null,
+    "HALO": null,
+    "PFUR": null,
+    "EC": {
+     "locus": "b1860",
+     "len": 1011,
+     "seq": "ATGATTGAAGCAGACCGTCTGATTTCTGCCGGTACCACTTTGCCGGAAGATGTAGCAGATCGCGCCATTCGCCCCAAATTACTGGAAGAGTATGTTGGTCAGCCGCAGGTTCGTTCACAG",
+     "gc": 52.7,
+     "aa": 336
+    }
+   },
+   "idt": {
+    "DR1|DDES": 93.1,
+    "DR1|DGOB": 94,
+    "DR1|DGEO": 91.2,
+    "DR1|TTH": 73.5,
+    "DR1|RXY": 56.8,
+    "DR1|KRAD": 52.3,
+    "DR1|CHRO": 52.3,
+    "DR1|EC": 55,
+    "DDES|DGOB": 92.8,
+    "DDES|DGEO": 92.4,
+    "DDES|TTH": 73.1,
+    "DDES|RXY": 58.1,
+    "DDES|KRAD": 52.7,
+    "DDES|CHRO": 52.7,
+    "DDES|EC": 55.4,
+    "DGOB|DGEO": 91.8,
+    "DGOB|TTH": 73.5,
+    "DGOB|RXY": 57.5,
+    "DGOB|KRAD": 54.2,
+    "DGOB|CHRO": 52.4,
+    "DGOB|EC": 55.1,
+    "DGEO|TTH": 74.1,
+    "DGEO|RXY": 59.5,
+    "DGEO|KRAD": 55,
+    "DGEO|CHRO": 53.8,
+    "DGEO|EC": 55,
+    "TTH|RXY": 60.2,
+    "TTH|KRAD": 56.8,
+    "TTH|CHRO": 54.6,
+    "TTH|EC": 55.2,
+    "RXY|KRAD": 53,
+    "RXY|CHRO": 53.8,
+    "RXY|EC": 54.5,
+    "KRAD|CHRO": 49.6,
+    "KRAD|EC": 52.4,
+    "CHRO|EC": 55.4
+   }
+  },
+  {
+   "g": "mutS",
+   "scope": "cons",
+   "pathway": "Mismatch repair",
+   "plain": "A proofreader that spots mismatched or mispaired DNA bases.",
+   "why": "Catches errors so repair and recombination stay accurate.",
+   "tags": [
+    "mismatch repair",
+    "damage recognition"
+   ],
+   "role": "MutS — mismatch recognition.",
+   "expr": null,
+   "sp": {
+    "DR1": {
+     "locus": "DR_RS05355",
+     "len": 2479,
+     "seq": "ATGCTCGAGCAGTACGTTGCCATGCGCGACGAGGTGGCCGCGCAGCTGCCGCACGCCGTGCTGCTCTTTCAGGTGGGCGACTTTTACGAGACCTTCGGCGAAGACGCCGAGCGCACCGCC",
+     "gc": 70.4,
+     "aa": 213
+    },
+    "DDES": {
+     "locus": "DEIDE_RS08985",
+     "len": 2550,
+     "seq": "ATGCGAGCAGCGCAGAGTGTATTGAAAGGAACCGGGTCGGGGTCGCTGCCGCCGATGCTGGATCAATATGTGCGCATGCGGGACGAAGTTGCCCAGCAGTTGCCTCATGCCATCTTGCTG",
+     "gc": 67.6,
+     "aa": 849
+    },
+    "DGOB": {
+     "locus": "DGO_RS12125",
+     "len": 2478,
+     "seq": "ATGCTCGAACAGTACGTGCGGATGCGCGACGAGGTGGCGGCGCAGCTGCCGCACGCCATCCTGCTGTTTCAGGTGGGGGACTTCTACGAGACCTTCGGGGAGGACGCCGAGCGCGCCGCC",
+     "gc": 74.3,
+     "aa": 825
+    },
+    "DGEO": {
+     "locus": "DGEO_RS10400",
+     "len": 2574,
+     "seq": "ATGCCGGTGGGGGTGCCGCAAAATGTCTTGAAGGGAACGGGGTCGGGAGTGCTGCCGCCGATGCTCGAACAGTACGTGGCCCTGCGCGACGCCCATCCCGATTTCCTGCTCCTGTTTCAG",
+     "gc": 70.4,
+     "aa": 857
+    },
+    "TTH": {
+     "locus": "TTH_RS06705",
+     "len": 2436,
+     "seq": "ATGGAAGGCATGCTCAAGGGCGAAGGCCCAGGTCCACTTCCCCCTCTTCTGCAGCAGTACGTGGAGCTCCGCGACCGCTACCCGGACTACCTCCTCCTCTTCCAGGTGGGGGACTTCTAC",
+     "gc": 69.4,
+     "aa": 811
+    },
+    "RXY": {
+     "locus": "Rxycam_RS11755",
+     "len": 2355,
+     "seq": "ATGCTCGGACGCTACGCCGAACTCAAGGCCCAGCTTCCGCCCGGGACGATCCTCTTCTACCAGGTCGGCACCTTCTTCGAGACCTTCGAGGAAGACGCCAAGACCGTCTCCCGCGAGCTC",
+     "gc": 71.6,
+     "aa": 784
+    },
+    "KRAD": null,
+    "CHRO": {
+     "locus": "CHRO_RS06880",
+     "len": 2679,
+     "seq": "ATGAAAGTTCCTTCCACTCCAACTGCTGCTGAATCTCAAGCACCCATACAACCTTGTACTGACTGTCGGCAGATAGACAAAAACAAGCTATCGCCAATGTACAAGCATTATGTAGAAGTA",
+     "gc": 44.5,
+     "aa": 892
+    },
+    "TGAM": null,
+    "HALO": {
+     "locus": "VNG_RS00675",
+     "len": 2616,
+     "seq": "ATGGGGATCGTAGACGAGTTCCAGGCGTTGAAAGCCGAGACCGACGCGGACCTGCTGGCGATGCAGGTGGGTGATTTCTACGAGTTCTTCGCGGCGGACGCGCGAACGGTCGCGTCGGTG",
+     "gc": 72.8,
+     "aa": 871
+    },
+    "PFUR": null,
+    "EC": {
+     "locus": "b2733",
+     "len": 2562,
+     "seq": "ATGAGTGCAATAGAAAATTTCGACGCCCATACGCCCATGATGCAGCAGTATCTCAGGCTGAAAGCCCAGCATCCCGAGATCCTGCTGTTTTACCGGATGGGTGATTTTTATGAACTGTTT",
+     "gc": 56.1,
+     "aa": 853
+    }
+   },
+   "idt": {
+    "DR1|DDES": 85,
+    "DR1|DGOB": 85.9,
+    "DR1|DGEO": 81.7,
+    "DR1|TTH": 61.5,
+    "DR1|RXY": 42.7,
+    "DR1|CHRO": 43.2,
+    "DR1|HALO": 45.1,
+    "DR1|EC": 43.7,
+    "DDES|DGOB": 82.7,
+    "DDES|DGEO": 82.3,
+    "DDES|TTH": 59.1,
+    "DDES|RXY": 42.7,
+    "DDES|CHRO": 39.5,
+    "DDES|HALO": 41.6,
+    "DDES|EC": 39,
+    "DGOB|DGEO": 84.5,
+    "DGOB|TTH": 57.3,
+    "DGOB|RXY": 43.1,
+    "DGOB|CHRO": 38.9,
+    "DGOB|HALO": 41.7,
+    "DGOB|EC": 40.6,
+    "DGEO|TTH": 60.3,
+    "DGEO|RXY": 42.9,
+    "DGEO|CHRO": 38.3,
+    "DGEO|HALO": 41.1,
+    "DGEO|EC": 39.5,
+    "TTH|RXY": 42.2,
+    "TTH|CHRO": 42.3,
+    "TTH|HALO": 42.2,
+    "TTH|EC": 42.3,
+    "RXY|CHRO": 43.9,
+    "RXY|HALO": 42.6,
+    "RXY|EC": 42.3,
+    "CHRO|HALO": 36.9,
+    "CHRO|EC": 41,
+    "HALO|EC": 38.3
+   }
+  },
+  {
+   "g": "gyrA",
+   "scope": "cons",
+   "pathway": "DNA topology",
+   "plain": "Part of DNA gyrase, the machine that manages the twist and tension of the chromosome.",
+   "why": "Keeps DNA topology in check during the heavy unwinding and resynthesis of repair.",
+   "tags": [
+    "DNA topology",
+    "supercoiling"
+   ],
+   "role": "GyrA — DNA gyrase subunit A.",
+   "expr": null,
+   "sp": {
+    "DR1": {
+     "locus": "DR_RS09795",
+     "len": 2439,
+     "seq": "ATGACCGGAATTCAACCTGTTGACATCACCAGCGAAGTCAAGACCAATTTCATCAACTACGCGATGAACGTCATCGTGGACCGCGCGCTGCCCGACGTGCGCGACGGCATGAAGCCGGTG",
+     "gc": 63.9,
+     "aa": 812
+    },
+    "DDES": {
+     "locus": "DEIDE_RS07230",
+     "len": 2436,
+     "seq": "ATGACTGGAATTCATCCCGTTGACATCACCAGCGAAGTCAAGACCAACTTCATCAACTACGCCATGAACGTGATCGTGGACCGCGCGCTGCCTGACGTGCGCGACGGTCTTAAACCCGTG",
+     "gc": 60.9,
+     "aa": 811
+    },
+    "DGOB": {
+     "locus": "DGO_RS05285",
+     "len": 2436,
+     "seq": "ATGACCGGAATTCAGCCTGTTGACATCACCAGTGAAGTCAAGACCAACTTCATCAACTACGCCATGAACGTGATCGTGGACCGCGCGCTGCCCGACGTGCGCGACGGTCTCAAGCCGGTG",
+     "gc": 65.7,
+     "aa": 811
+    },
+    "DGEO": {
+     "locus": "DGEO_RS07795",
+     "len": 2430,
+     "seq": "ATGACTGGAATCCATCCCGTTGACATCACCAGCGAAGTCAAGACCAACTTCATCAATTACGCGATGAACGTGATTGTGGACCGCGCGCTCCCCGACGTTCGCGACGGTCTCAAGCCGGTG",
+     "gc": 63.6,
+     "aa": 809
+    },
+    "TTH": {
+     "locus": "TTH_RS06855",
+     "len": 2418,
+     "seq": "ATGGCCCAGGTACTGCCTGTAGAAATCACCGAGGAGCTCAAGCAGAGCTTCATCAACTACGCCATGTCCGTCATCGTGGACCGGGCCCTGCCCGACGTGCGGGACGGGCTCAAGCCGGTC",
+     "gc": 68.2,
+     "aa": 805
+    },
+    "RXY": {
+     "locus": "Rxycam_RS10190",
+     "len": 2559,
+     "seq": "ATGCTTGACACCTTCTCGGGCAACATCCAGCAGCACTCCATAGAGGACGAGATACGCTCCTCCTTCCTCTCCTACGCGATGAGCGTTATCGTCTCGCGCGCCCTGCCGGACGTGCGGGAC",
+     "gc": 67.1,
+     "aa": 852
+    },
+    "KRAD": {
+     "locus": "KRAD_RS11160",
+     "len": 2733,
+     "seq": "GTGAGCGAGAGCACCACCGAACCCCCCCACCCCGGCGACCGCGTCGAGCAGGTGGACCTGCAGGCCGAGATGCAGCGGTCCTACCTCGACTACGCGATGAGCGTGATCGTCTCCCGGGCC",
+     "gc": 70.8,
+     "aa": 910
+    },
+    "CHRO": {
+     "locus": "CHRO_RS01375",
+     "len": 2514,
+     "seq": "ATGGCAAAACAATTAAACCTTCTCCCAGCGGGACAGGTGATTCCCACAGCCCTGCATACAGAAATGCAACGGTCTTATCTGGAATATGCCATGAGCGTAATTGTAGGGCGGGCATTACCA",
+     "gc": 47.3,
+     "aa": 837
+    },
+    "TGAM": null,
+    "HALO": {
+     "locus": "VNG_RS03475",
+     "len": 2475,
+     "seq": "ATGAGTTCCGAATCACCAGACGTACCCGACGACGTGGCGGATCGAGTGAAGAACGTGCGCGTGGACGAGGAGATGGAGCAGTCGTACATCGACTACGCGATGAGCGTCATCGCGGGGCGC",
+     "gc": 66.9,
+     "aa": 824
+    },
+    "PFUR": null,
+    "EC": {
+     "locus": "b2231",
+     "len": 2628,
+     "seq": "ATGAGCGACCTTGCGAGAGAAATTACACCGGTCAACATTGAGGAAGAGCTGAAGAGCTCCTATCTGGATTATGCGATGTCGGTCATTGTTGGCCGTGCGCTGCCAGATGTCCGAGATGGC",
+     "gc": 54,
+     "aa": 875
+    }
+   },
+   "idt": {
+    "DR1|DDES": 85.9,
+    "DR1|DGOB": 88.5,
+    "DR1|DGEO": 88.1,
+    "DR1|TTH": 57.8,
+    "DR1|RXY": 47.7,
+    "DR1|KRAD": 46.9,
+    "DR1|CHRO": 39.5,
+    "DR1|HALO": 43.5,
+    "DR1|EC": 50,
+    "DDES|DGOB": 88.3,
+    "DDES|DGEO": 86.9,
+    "DDES|TTH": 59,
+    "DDES|RXY": 49.4,
+    "DDES|KRAD": 47.7,
+    "DDES|CHRO": 40.9,
+    "DDES|HALO": 43.8,
+    "DDES|EC": 51.5,
+    "DGOB|DGEO": 87,
+    "DGOB|TTH": 58.3,
+    "DGOB|RXY": 49.2,
+    "DGOB|KRAD": 47.1,
+    "DGOB|CHRO": 39.6,
+    "DGOB|HALO": 44.4,
+    "DGOB|EC": 50.4,
+    "DGEO|TTH": 59.4,
+    "DGEO|RXY": 48.8,
+    "DGEO|KRAD": 47.5,
+    "DGEO|CHRO": 39.6,
+    "DGEO|HALO": 44.3,
+    "DGEO|EC": 51.2,
+    "TTH|RXY": 54,
+    "TTH|KRAD": 47.5,
+    "TTH|CHRO": 44.8,
+    "TTH|HALO": 47.8,
+    "TTH|EC": 51.3,
+    "RXY|KRAD": 50,
+    "RXY|CHRO": 42.8,
+    "RXY|HALO": 47.8,
+    "RXY|EC": 48.7,
+    "KRAD|CHRO": 42.5,
+    "KRAD|HALO": 45.8,
+    "KRAD|EC": 46.1,
+    "CHRO|HALO": 40.9,
+    "CHRO|EC": 41,
+    "HALO|EC": 47.3
+   }
+  },
+  {
+   "g": "polA",
+   "scope": "cons",
+   "pathway": "Gap filling / excision repair",
+   "plain": "A DNA-copying enzyme that fills in gaps and replaces removed stretches.",
+   "why": "After damaged DNA is cut out, it resynthesizes the missing piece.",
+   "tags": [
+    "excision repair",
+    "DNA synthesis"
+   ],
+   "role": "PolA — DNA polymerase I.",
+   "expr": null,
+   "sp": {
+    "DR1": {
+     "locus": "DR_RS08720",
+     "len": 2766,
+     "seq": "ATGGCCGACGCTTCCCCAGATCCCTCCAAGCCAGACACGCTGGTGCTGATTGACGGTCACGCGCTGGCGTTCCGTTCGTATTTCGCCCTGCCGCCGCTCAACAACTCCAAGGGCGAGATG",
+     "gc": 66.6,
+     "aa": 921
+    },
+    "DDES": {
+     "locus": "DEIDE_RS08735",
+     "len": 2772,
+     "seq": "ATGACCACGTCCCCCACCCCCGATACGCTGGTGTTGATTGACGGTCACGCGCTGGCGTTCCGTTCGTACTTTGCGCTGCCGCCCCTGACCAACAGCCGGGGCGAGGCCACGAACGCCATT",
+     "gc": 65.2,
+     "aa": 923
+    },
+    "DGOB": {
+     "locus": "DGO_RS07325",
+     "len": 2703,
+     "seq": "GTGCCGCCCCTGAACAACAGCCGGGGCGAGGCCACCAACGCCATCGTCGGGTTCCTGCGCCAGACCCTGCGCCTGATGCGCCAGCGCGGCAATCAGGTCATCGTGGTGTTCGACCCGCCG",
+     "gc": 70.6,
+     "aa": 900
+    },
+    "DGEO": {
+     "locus": "DGEO_RS11070",
+     "len": 2724,
+     "seq": "ATGACTGCCTCCTCTCCCGACACGCTGGTGCTGATTGACGGGCACGCGCTGGCGTACCGTTCGTACTTCGCGCTGCCGCCGCTGCACAACAGCCGGGGCGAGGCGACCCATGCGATTCTG",
+     "gc": 68.1,
+     "aa": 907
+    },
+    "TTH": {
+     "locus": "TTH_RS05365",
+     "len": 2505,
+     "seq": "ATGGAGGCGATGCTTCCGCTCTTTGAACCCAAAGGCCGGGTCCTCCTGGTGGACGGCCACCACCTGGCCTACCGCACCTTCTTCGCCCTGAAGGGCCTCACCACGAGCCGGGGCGAACCG",
+     "gc": 67.9,
+     "aa": 834
+    },
+    "RXY": null,
+    "KRAD": {
+     "locus": "KRAD_RS19295",
+     "len": 2802,
+     "seq": "GTGACCCCCGCTGCCTCCACCACCGCCTCCACGACCCGGGCGCGCGCGAGCAGCGCGCGGAAGGGGGCGAAGGCGGCCCCCGCCCGTCCGCGGCTGCTCCTCATCGACGGTCACTCGATG",
+     "gc": 72.8,
+     "aa": 933
+    },
+    "CHRO": {
+     "locus": "CHRO_RS02435",
+     "len": 3000,
+     "seq": "ATGACTCAAGCTGCATCCGATCCTACTCCTGCTAACAGTACCGCACCACAGCGCCCCACGTTTATTTTAGTAGACGGGCATTCTTTAGCTTTCCGTTCTTATTTCGCCTTTGCCAAGGGA",
+     "gc": 41.8,
+     "aa": 999
+    },
+    "TGAM": null,
+    "HALO": null,
+    "PFUR": null,
+    "EC": {
+     "locus": "b3863",
+     "len": 2787,
+     "seq": "ATGGTTCAGATCCCCCAAAATCCACTTATCCTTGTAGATGGTTCATCTTATCTTTATCGCGCATATCACGCGTTTCCCCCGCTGACTAACAGCGCAGGCGAGCCGACCGGTGCGATGTAT",
+     "gc": 52,
+     "aa": 928
+    }
+   },
+   "idt": {
+    "DR1|DDES": 74.2,
+    "DR1|DGOB": 75.4,
+    "DR1|DGEO": 73.4,
+    "DR1|TTH": 52.6,
+    "DR1|KRAD": 36.5,
+    "DR1|CHRO": 39.1,
+    "DR1|EC": 39.7,
+    "DDES|DGOB": 78.7,
+    "DDES|DGEO": 76.2,
+    "DDES|TTH": 51.9,
+    "DDES|KRAD": 36.8,
+    "DDES|CHRO": 39,
+    "DDES|EC": 39.7,
+    "DGOB|DGEO": 72.1,
+    "DGOB|TTH": 51.3,
+    "DGOB|KRAD": 36.6,
+    "DGOB|CHRO": 38.8,
+    "DGOB|EC": 40.7,
+    "DGEO|TTH": 53.5,
+    "DGEO|KRAD": 37.6,
+    "DGEO|CHRO": 40,
+    "DGEO|EC": 40.6,
+    "TTH|KRAD": 42.3,
+    "TTH|CHRO": 43.5,
+    "TTH|EC": 41,
+    "KRAD|CHRO": 36.8,
+    "KRAD|EC": 38.1,
+    "CHRO|EC": 41.2
+   }
+  },
+  {
+   "g": "lexA",
+   "scope": "cons",
+   "pathway": "SOS regulation",
+   "plain": "A switch that keeps emergency repair genes off until they're needed.",
+   "why": "Represses the bacterial SOS response; when damage hits it's cleaved and those genes switch on. (D. radiodurans leans more on the IrrE/DdrO switch.)",
+   "tags": [
+    "regulation",
+    "SOS response"
+   ],
+   "role": "LexA — SOS-response repressor.",
+   "expr": null,
+   "sp": {
+    "DR1": {
+     "locus": "DR_RS15325",
+     "len": 633,
+     "seq": "ATGCCGCCTGAACTGACGCCCACCCGCCGCTCCATCCTGCAAGCCACCCTGCGTCTGGGCGCGGGGGCCACGGCGGGGCAGGTGGCGCAGGAAGTGGGCATCACCAAGCAGGCAATCAGC",
+     "gc": 70.9,
+     "aa": 210
+    },
+    "DDES": null,
+    "DGOB": null,
+    "DGEO": null,
+    "TTH": null,
+    "RXY": {
+     "locus": "Rxycam_RS03325",
+     "len": 630,
+     "seq": "ATGCGAGAGAACCTGGAGAAGAGGTTGGAGATCCTGGGCTACCTGGCCCGCAGGGCCGCCAGGGGCGAGGGGGCGCCGAGCGTGAAGGAGGTGGGGGAGGCCGTGGGCTTGAGGAGCACA",
+     "gc": 67.1,
+     "aa": 209
+    },
+    "KRAD": {
+     "locus": "KRAD_RS03520",
+     "len": 678,
+     "seq": "ATCCACCACTTCCCCGACGGCCCCCACGGCCGCGACGGCCTGACCGCCCGGCAGCGGCGGGTCCTGGCCGCCATCCAGGAGTGCGTCGAGCAGCGGGGCTACCCGCCGAGCATGCGCGAG",
+     "gc": 74.2,
+     "aa": 225
+    },
+    "CHRO": {
+     "locus": "CHRO_RS19320",
+     "len": 612,
+     "seq": "ATGGAACCCCTAACGGTAGCTCAACAAGAACTATATGACTGGTTAGCAGAATACGTGCGGCAATACCAGCATTCACCTTCAATTCGCCAGATGATGCAAGCGATGAATTTGAAATCGCCT",
+     "gc": 47.9,
+     "aa": 203
+    },
+    "TGAM": null,
+    "HALO": null,
+    "PFUR": null,
+    "EC": {
+     "locus": "b4043",
+     "len": 609,
+     "seq": "ATGAAAGCGTTAACGGCCAGGCAACAAGAGGTGTTTGATCTCATCCGTGATCACATCAGCCAGACAGGTATGCCGCCGACGCGTGCGGAAATCGCGCAGCGTTTGGGGTTCCGTTCCCCA",
+     "gc": 51.9,
+     "aa": 202
+    }
+   },
+   "idt": {
+    "DR1|RXY": 33,
+    "DR1|KRAD": 33.8,
+    "DR1|CHRO": 29.6,
+    "DR1|EC": 33.2,
+    "RXY|KRAD": 36.8,
+    "RXY|CHRO": 30.5,
+    "RXY|EC": 37.6,
+    "KRAD|CHRO": 34,
+    "KRAD|EC": 39.6,
+    "CHRO|EC": 35.6
+   }
+  },
+  {
+   "g": "tkt",
+   "scope": "cons",
+   "pathway": "Metabolic recovery",
+   "plain": "A metabolic enzyme in the pentose-phosphate pathway.",
+   "why": "Regenerates NADPH — the cell's antioxidant and building-block fuel — powering the energy-intensive recovery after irradiation.",
+   "tags": [
+    "metabolism",
+    "metabolic recovery"
+   ],
+   "role": "Transketolase — PPP, NADPH regeneration.",
+   "expr": null,
+   "sp": {
+    "DR1": {
+     "locus": "DR_RS11605",
+     "len": 2001,
+     "seq": "ATGACAGACCAGAGCGTTTCCCAAAACGTGGCGCGGCTGAGTGTGAACACCATTCGCACGCTCGCCATTGACGCGGTGCAGGCCGCCAACTCGGGCCACCCCGGTGCGCCGCTGGGCATG",
+     "gc": 67.1,
+     "aa": 666
+    },
+    "DDES": {
+     "locus": "DEIDE_RS00320",
+     "len": 1968,
+     "seq": "ATGTCAACTGAGCAGCTGAGCATCAACACCATCCGCACGCTGTCTATCGATGCCGTACAGGCCGCCAACAGTGGCCACCCTGGCGCGCCGCTGGGCATGGCCCCGATGGCCTACGTGGTG",
+     "gc": 66.3,
+     "aa": 655
+    },
+    "DGOB": {
+     "locus": "DGO_RS14965",
+     "len": 1977,
+     "seq": "ATGACCGAGCACAAGGACGTGGCGCAACTCAGTGTCAACACGATTCGCACCCTGAGCATCGACGGAGTGCAGGCCGCCAACAGCGGCCACCCCGGCGCGCCGCTGGGTATGGCCCCGATG",
+     "gc": 69.8,
+     "aa": 658
+    },
+    "DGEO": {
+     "locus": "DGEO_RS14250",
+     "len": 2004,
+     "seq": "ATGAGTCCCGAACAGCAGGCCGTGCGTCAGGATGTCGATCAGCTGAGCATCAACACCATCAGGACGCTTGCCATCGATGCGGTGCAGCGGGCCAACAGTGGCCACCCCGGCGCGCCGCTC",
+     "gc": 66.1,
+     "aa": 667
+    },
+    "TTH": {
+     "locus": "TTH_RS00565",
+     "len": 1956,
+     "seq": "ATGAAGGAGACGCGGGACCTAGAGACCCTTTCGGTGAACGCCATCCGCTTCCTGGCCATTGACGCGGTGGAGAAGGCGCGAAGCGGCCACCCCGGGATGCCCATGGGCATGGCGCCCCTG",
+     "gc": 70.2,
+     "aa": 651
+    },
+    "RXY": null,
+    "KRAD": {
+     "locus": "KRAD_RS19440",
+     "len": 2094,
+     "seq": "GTGAGCCAGCCCAGCCTCGAGTGGAGCGACTTGGACCAGAGGACGGTCGACACCGCCCGCGTCCTCGCGATGGACGCGGTGCAGCGCGCCGGCAACGGTCACCCGGGTACGGCCATGAGC",
+     "gc": 71.8,
+     "aa": 697
+    },
+    "CHRO": {
+     "locus": "CHRO_RS08570",
+     "len": 2031,
+     "seq": "ATGGCTGTTGCAACCCAATCCCTTGAAGAACTTTGTATTAACTCAATCCGCTTTCTGGCAATTGATGCCGTAGAAAAGGCAAAGTCGGGTCATCCTGGGCTGCCGATGGGTGCTGCTCCG",
+     "gc": 50,
+     "aa": 676
+    },
+    "TGAM": null,
+    "HALO": null,
+    "PFUR": null,
+    "EC": {
+     "locus": "b2935",
+     "len": 1992,
+     "seq": "ATGTCCTCACGTAAAGAGCTTGCCAATGCTATTCGTGCGCTGAGCATGGACGCAGTACAGAAAGCCAAATCCGGTCACCCGGGTGCCCCTATGGGTATGGCTGACATTGCCGAAGTCCTG",
+     "gc": 55.7,
+     "aa": 663
+    }
+   },
+   "idt": {
+    "DR1|DDES": 82.6,
+    "DR1|DGOB": 79,
+    "DR1|DGEO": 81.5,
+    "DR1|TTH": 52.2,
+    "DR1|KRAD": 47,
+    "DR1|CHRO": 52.3,
+    "DR1|EC": 48.4,
+    "DDES|DGOB": 81.4,
+    "DDES|DGEO": 85.2,
+    "DDES|TTH": 52.1,
+    "DDES|KRAD": 49.5,
+    "DDES|CHRO": 55.3,
+    "DDES|EC": 50.1,
+    "DGOB|DGEO": 82.2,
+    "DGOB|TTH": 51.5,
+    "DGOB|KRAD": 48.8,
+    "DGOB|CHRO": 53.2,
+    "DGOB|EC": 52,
+    "DGEO|TTH": 54.2,
+    "DGEO|KRAD": 49,
+    "DGEO|CHRO": 54.6,
+    "DGEO|EC": 51,
+    "TTH|KRAD": 50.1,
+    "TTH|CHRO": 55,
+    "TTH|EC": 51,
+    "KRAD|CHRO": 48.1,
+    "KRAD|EC": 46.2,
+    "CHRO|EC": 52.5
+   }
+  }
+ ],
+ "SPECIES": {
+  "DR1": {
+   "n": "D. radiodurans",
+   "s": "R1",
+   "kind": "radiotolerant",
+   "lin": "Deinococcus–Thermus",
+   "dom": "Bacteria",
+   "distant": false
+  },
+  "DDES": {
+   "n": "D. deserti",
+   "s": "VCD115",
+   "kind": "radiotolerant",
+   "lin": "Deinococcus–Thermus",
+   "dom": "Bacteria",
+   "distant": false
+  },
+  "DGOB": {
+   "n": "D. gobiensis",
+   "s": "I-0",
+   "kind": "radiotolerant",
+   "lin": "Deinococcus–Thermus",
+   "dom": "Bacteria",
+   "distant": false
+  },
+  "DGEO": {
+   "n": "D. geothermalis",
+   "s": "DSM 11300",
+   "kind": "radiotolerant",
+   "lin": "Deinococcus–Thermus",
+   "dom": "Bacteria",
+   "distant": false
+  },
+  "TTH": {
+   "n": "T. thermophilus",
+   "s": "HB8",
+   "kind": "sensitive control",
+   "lin": "Deinococcus–Thermus",
+   "dom": "Bacteria",
+   "distant": false
+  },
+  "RXY": {
+   "n": "R. xylanophilus",
+   "s": "DSM 9941",
+   "kind": "radiotolerant",
+   "lin": "Actinobacteria",
+   "dom": "Bacteria",
+   "distant": false
+  },
+  "KRAD": {
+   "n": "K. radiotolerans",
+   "s": "SRS30216",
+   "kind": "radiotolerant",
+   "lin": "Actinobacteria",
+   "dom": "Bacteria",
+   "distant": false
+  },
+  "CHRO": {
+   "n": "Chroococcidiopsis",
+   "s": "PCC 7203",
+   "kind": "radiotolerant",
+   "lin": "Cyanobacteria",
+   "dom": "Bacteria",
+   "distant": false
+  },
+  "TGAM": {
+   "n": "T. gammatolerans",
+   "s": "EJ3",
+   "kind": "radiotolerant",
+   "lin": "Euryarchaeota",
+   "dom": "Archaea",
+   "distant": true
+  },
+  "HALO": {
+   "n": "H. salinarum",
+   "s": "NRC-1",
+   "kind": "radiotolerant",
+   "lin": "Euryarchaeota",
+   "dom": "Archaea",
+   "distant": true
+  },
+  "PFUR": {
+   "n": "P. furiosus",
+   "s": "DSM 3638",
+   "kind": "radiotolerant",
+   "lin": "Euryarchaeota",
+   "dom": "Archaea",
+   "distant": true
+  },
+  "EC": {
+   "n": "E. coli",
+   "s": "K-12",
+   "kind": "sensitive control",
+   "lin": "Proteobacteria",
+   "dom": "Bacteria",
+   "distant": false
+  }
+ }
+}

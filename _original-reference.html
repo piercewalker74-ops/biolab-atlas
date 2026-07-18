@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BioLab Atlas — radiation-resistance gene explorer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<style>
+  :root{
+    --ink:#1c2228; --ink-mid:#454d56; --ink-dim:#717982;
+    --line:rgba(28,34,40,.14); --line-soft:rgba(28,34,40,.08);
+    --glass:rgba(238,242,245,.70); --glass-deep:rgba(244,247,249,.86);
+    --accent:#2f6f86;
+    --A:#1f7a90; --T:#3f5e86; --G:#6e5f93; --C:#5c6772;
+    --mono:'JetBrains Mono',ui-monospace,Menlo,monospace;
+    --display:'Space Grotesk',system-ui,sans-serif;
+    --body:'Inter',system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{font-family:var(--body);color:var(--ink);overflow:hidden;-webkit-font-smoothing:antialiased;
+    background:radial-gradient(120% 100% at 50% 32%, #b3b9c0 0%, #9aa0a8 45%, #777e87 100%)}
+  body[data-mode="lookup"]{--accent:#2f6f86}
+  body[data-mode="cross"]{--accent:#2a7d72}
+  body[data-mode="func"]{--accent:#5a5f8c}
+  body[data-mode="expr"]{--accent:#4f6c86}
+  #scene{position:fixed;inset:0;z-index:0}
+  #grain{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.06;mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+  .vignette{position:fixed;inset:0;z-index:1;pointer-events:none;background:radial-gradient(125% 95% at 50% 36%,transparent 52%,rgba(60,66,74,.42) 100%)}
+
+  header{position:fixed;top:0;left:0;right:0;z-index:20;display:flex;align-items:center;gap:18px;padding:16px 26px}
+  .brand{font-family:var(--display);font-weight:700;font-size:18px;letter-spacing:-.01em;white-space:nowrap;color:#11161b}
+  .brand b{color:var(--accent);transition:color .5s}
+  nav{display:flex;gap:2px;margin-left:6px}
+  .tab{font-family:var(--mono);font-size:11.5px;letter-spacing:.04em;color:var(--ink-mid);background:none;border:1px solid transparent;
+    padding:8px 13px;border-radius:5px;cursor:pointer;transition:.18s;text-transform:uppercase}
+  .tab:hover{color:var(--ink)}
+  .tab.active{color:var(--ink);border-color:var(--line);background:var(--glass);backdrop-filter:blur(8px)}
+  .tab.active .k{color:var(--accent)}
+  .tab .k{color:var(--ink-dim);margin-right:7px}
+  .spacer{flex:1}
+  .hbtn{font-family:var(--mono);font-size:11px;letter-spacing:.08em;color:var(--ink-mid);background:var(--glass);
+    border:1px solid var(--line);padding:8px 13px;border-radius:5px;cursor:pointer;backdrop-filter:blur(10px);text-transform:uppercase}
+  .hbtn:hover{color:var(--ink);border-color:var(--accent)}
+
+  /* intro overlay */
+  #intro{position:fixed;inset:0;z-index:40;display:flex;align-items:center;justify-content:center;padding:20px;
+    background:rgba(150,156,164,.34);backdrop-filter:blur(3px);transition:opacity .45s;cursor:pointer}
+  #intro.gone{opacity:0;pointer-events:none}
+  .intro-card{max-width:540px;background:var(--glass-deep);backdrop-filter:blur(20px) saturate(120%);
+    border:1px solid var(--line);border-radius:14px;box-shadow:0 30px 80px rgba(40,48,58,.34);padding:34px 36px;cursor:default}
+  .intro-card .ey{font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--accent);margin-bottom:12px}
+  .intro-card h1{font-family:var(--display);font-weight:600;font-size:30px;letter-spacing:-.02em;margin-bottom:14px;color:#11161b}
+  .intro-card p{font-size:14.5px;color:var(--ink-mid);line-height:1.62;margin-bottom:13px}
+  .intro-card .src{font-family:var(--mono);font-size:11px;color:var(--ink-dim);line-height:1.6;border-top:1px solid var(--line-soft);padding-top:13px;margin-top:4px}
+  .intro-enter{margin-top:20px;font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:#fff;background:var(--accent);
+    border:none;padding:12px 22px;border-radius:7px;cursor:pointer}
+  .intro-enter:hover{filter:brightness(1.08)}
+
+  .caption{position:fixed;top:74px;left:26px;z-index:10;max-width:355px;cursor:pointer;transition:opacity .4s}
+  .caption.hidden{opacity:0;pointer-events:none}
+  .caption .ey{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);margin-bottom:9px}
+  .caption h1{font-family:var(--display);font-weight:600;font-size:24px;line-height:1.05;letter-spacing:-.02em;margin-bottom:9px;color:#11161b}
+  .caption p{font-size:12.5px;color:var(--ink-mid);line-height:1.55}
+  .caption .more{font-family:var(--mono);font-size:10px;color:var(--accent);margin-top:9px}
+
+  /* helix species labels */
+  .hlabel{position:fixed;z-index:9;top:86px;transform:translateX(-50%);text-align:center;pointer-events:none;transition:opacity .4s;opacity:0}
+  .hlabel.on{opacity:1}
+  .hlabel .nm{font-family:var(--display);font-weight:600;font-size:15px;color:#11161b}
+  .hlabel .sub{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-dim);margin-top:2px}
+
+  .panel{position:fixed;z-index:15;background:var(--glass-deep);backdrop-filter:blur(18px) saturate(118%);
+    border:1px solid var(--line);border-radius:9px;box-shadow:0 18px 50px rgba(40,48,58,.28);
+    transition:transform .42s cubic-bezier(.2,.8,.2,1),opacity .3s}
+  #leftPanel{left:26px;bottom:26px;width:332px;max-height:56vh;display:flex;flex-direction:column;overflow:hidden}
+  #leftPanel.hide{transform:translateX(-390px);opacity:0;pointer-events:none}
+  #rightPanel{right:26px;top:74px;width:374px;max-height:calc(100vh - 130px);display:flex;flex-direction:column;overflow:hidden}
+  #rightPanel.hide{transform:translateX(430px);opacity:0;pointer-events:none}
+  .ph{padding:13px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+  .ph .t{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-dim)}
+  .ph .x{cursor:pointer;color:var(--ink-dim);font-size:15px;line-height:1;padding:2px 4px}
+  .ph .x:hover{color:var(--accent)}
+  .pbody{padding:14px 16px;overflow-y:auto}
+
+  .searchbar{display:flex;align-items:center;gap:9px;background:rgba(255,255,255,.55);border:1px solid var(--line);border-radius:6px;padding:0 12px}
+  .searchbar:focus-within{border-color:var(--accent)}
+  .searchbar input{flex:1;background:none;border:none;color:var(--ink);font-family:var(--body);font-size:14px;padding:11px 0;outline:none}
+  .searchbar input::placeholder{color:var(--ink-dim)}
+  .pills{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+  .pill{font-family:var(--mono);font-size:11px;color:var(--ink-mid);background:rgba(255,255,255,.45);border:1px solid var(--line);
+    padding:5px 10px;border-radius:14px;cursor:pointer;transition:.15s}
+  .pill:hover{border-color:var(--accent);color:var(--accent)}
+  .legend{margin-top:14px;padding-top:12px;border-top:1px solid var(--line-soft);font-size:11.5px;color:var(--ink-mid);line-height:1.55}
+  .legend b{font-family:var(--mono);font-size:10px;letter-spacing:.04em;padding:2px 7px;border-radius:3px}
+  .legend b.cons{background:rgba(31,122,144,.14);color:#1c6376}
+  .legend b.deino{background:rgba(110,95,147,.16);color:#5a4f78}
+  .reslist{margin-top:12px;display:flex;flex-direction:column;gap:1px}
+  .ritem{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 12px;border-radius:6px;cursor:pointer;border:1px solid transparent}
+  .ritem:hover{background:rgba(255,255,255,.5);border-color:var(--line)}
+  .ritem.sel{background:rgba(255,255,255,.62);border-color:var(--accent)}
+  .ritem.muted{opacity:.5}
+  .ritem .g{font-family:var(--mono);font-weight:600;font-size:14px}
+  .ritem .right{display:flex;align-items:center;gap:9px}
+  .s{font-family:var(--mono);font-size:9px;letter-spacing:.05em;text-transform:uppercase;padding:2px 7px;border-radius:3px}
+  .s.deino{background:rgba(110,95,147,.16);color:#5a4f78}
+  .s.cons{background:rgba(31,122,144,.14);color:#1c6376}
+  .pdots{display:flex;gap:3px}
+  .pdot{width:7px;height:7px;border-radius:50%;background:rgba(28,34,40,.16)}
+  .pdot.on{background:var(--accent)}
+  .rcount{font-family:var(--mono);font-size:11px;color:var(--ink-dim);margin-top:6px}
+  .rcount b{color:var(--accent)}
+  .grouphd{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-dim);margin:14px 0 6px}
+
+  /* species switcher */
+  .spswitch{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:4px}
+  .spbtn{font-family:var(--mono);font-size:11px;color:var(--ink-mid);background:rgba(255,255,255,.45);border:1px solid var(--line);
+    padding:6px 11px;border-radius:6px;cursor:pointer;transition:.15s}
+  .spbtn:hover{border-color:var(--accent)}
+  .spbtn.on{color:#fff;background:var(--accent);border-color:var(--accent)}
+  .spbtn.on2{color:var(--accent);border-color:var(--accent);background:rgba(47,111,134,.10)}
+  .spbtn .k{font-size:9px;color:inherit;opacity:.7;display:block;margin-top:1px}
+
+  /* detail */
+  .d-gene{font-family:var(--mono);font-weight:700;font-size:30px;letter-spacing:.01em;color:#11161b}
+  .d-scope{font-family:var(--mono);font-size:10px;letter-spacing:.04em;padding:3px 9px;border-radius:3px;margin-left:10px;vertical-align:middle}
+  .d-role{font-family:var(--mono);font-size:11px;color:var(--ink-dim);line-height:1.5;margin-top:8px}
+  .d-tags{display:flex;flex-wrap:wrap;gap:5px;margin:12px 0 4px}
+  .d-tag{font-family:var(--mono);font-size:9.5px;color:var(--ink-mid);background:rgba(255,255,255,.5);border:1px solid var(--line);padding:3px 7px;border-radius:3px}
+  .d-sec{font-family:var(--display);font-weight:600;font-size:13px;letter-spacing:.02em;color:var(--accent);margin:19px 0 8px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+  .d-sec.expandable{cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:8px;user-select:none}
+  .d-sec.expandable:hover{color:#11161b}
+  .d-sec .chev{font-family:var(--mono);font-size:15px;color:var(--ink-dim);transition:.2s;line-height:1}
+  .d-explain{max-height:0;overflow:hidden;transition:max-height .4s ease}
+  .d-explain.open{max-height:560px}
+  .d-explain .inner{margin-top:7px;padding:11px 13px;background:rgba(255,255,255,.5);border:1px solid var(--line-soft);border-radius:7px;font-size:12.5px;color:var(--ink-mid);line-height:1.62}
+  .d-text{font-size:13.5px;color:var(--ink);line-height:1.56}
+  .d-text.dim{color:var(--ink-mid);font-size:13px}
+  .d-path{display:inline-block;font-family:var(--mono);font-size:11.5px;color:var(--ink);background:rgba(255,255,255,.55);border:1px solid var(--line);padding:6px 12px;border-radius:5px}
+  .d-row{display:flex;gap:8px;margin-top:8px}
+  .d-link{flex:1;text-align:center;font-family:var(--mono);font-size:11px;color:var(--accent);border:1px solid var(--line);
+    background:rgba(255,255,255,.45);padding:8px;border-radius:6px;text-decoration:none}
+  .d-link:hover{border-color:var(--accent);background:rgba(255,255,255,.7)}
+  .expr-val{font-family:var(--display);font-weight:700;font-size:27px;color:var(--accent)}
+  .expr-meta{font-family:var(--mono);font-size:11px;color:var(--ink-mid);margin-top:3px;line-height:1.5}
+  .expr-sig{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10px;color:#8a6a1f;background:rgba(190,150,60,.14);padding:5px 9px;border-radius:3px;margin-top:9px}
+
+  .seqblock{font-family:var(--mono);font-size:12.5px;line-height:1.7;letter-spacing:.1em;word-break:break-all;
+    background:rgba(255,255,255,.42);border:1px solid var(--line);border-radius:6px;padding:11px 12px;margin-top:7px}
+  .b-A{color:var(--A);font-weight:600} .b-T{color:var(--T);font-weight:600} .b-G{color:var(--G);font-weight:600} .b-C{color:var(--C);font-weight:600}
+  .seqblock .org{display:block;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:5px}
+  .seqnote{font-family:var(--mono);font-size:10px;color:var(--ink-dim);margin-top:7px;line-height:1.5}
+  .absent{font-family:var(--mono);font-size:11.5px;color:#5a4f78;background:rgba(110,95,147,.10);border:1px solid rgba(110,95,147,.24);border-radius:6px;padding:10px 12px;margin-top:8px;line-height:1.5}
+
+  /* cross compare bar */
+  #compareBar{position:fixed;top:72px;left:50%;transform:translateX(-50%);z-index:14;display:none;flex-direction:column;align-items:center;gap:10px;
+    background:var(--glass-deep);backdrop-filter:blur(16px);border:1px solid var(--line);border-radius:10px;padding:13px 18px;box-shadow:0 14px 40px rgba(40,48,58,.24);max-width:90vw}
+  /* compareBar retired — compare control now lives in the left panel */
+  .cb-lab{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-dim)}
+  .cb-genes{display:flex;gap:5px;flex-wrap:wrap;justify-content:center;max-width:680px}
+  .cgene{font-family:var(--mono);font-size:11px;padding:5px 10px;border-radius:13px;border:1px solid var(--line);background:rgba(255,255,255,.45);cursor:pointer;color:var(--ink-mid)}
+  .cgene.both{border-color:var(--accent);color:var(--accent)}
+  .cgene.one{opacity:.6}
+  .cgene.sel{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+  /* bottom comparison panel */
+  #cmpPanel{position:fixed;left:50%;bottom:30px;transform:translateX(-50%);z-index:14;display:none;width:min(720px,92vw);
+    background:var(--glass-deep);backdrop-filter:blur(18px);border:1px solid var(--line);border-radius:10px;padding:16px 22px;box-shadow:0 16px 44px rgba(40,48,58,.26)}
+  #cmpPanel.show{display:block}
+  .cmp-hd{font-family:var(--mono);font-size:9.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);margin-bottom:9px}
+  .cmp-row{display:flex;gap:24px;flex-wrap:wrap}
+  .cmp-item{flex:1;min-width:160px}
+  .cmp-k{font-family:var(--mono);font-size:10px;color:var(--ink-dim);margin-bottom:3px}
+  .cmp-v{font-size:13px;color:var(--ink);line-height:1.5}
+  .cmp-note{font-family:var(--mono);font-size:10px;color:var(--ink-dim);margin-top:10px;line-height:1.5;border-top:1px solid var(--line-soft);padding-top:9px}
+  .spcard{background:rgba(255,255,255,.34);border:1px solid var(--line);border-radius:8px;padding:14px 15px;margin-bottom:12px}
+  .spcard.absent-card{background:rgba(110,95,147,.06)}
+  .sp-hd{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:11px;flex-wrap:wrap}
+  .sp-nm{font-family:var(--display);font-weight:600;font-size:15px;color:#11161b}
+  .sp-kind{font-family:var(--mono);font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-dim)}
+  .mini-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px;margin-bottom:8px}
+  .mini-k{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:2px}
+  .mini-v{font-family:var(--mono);font-size:12.5px;color:var(--ink)}
+  .mini-v.dim{color:var(--ink-mid);font-size:11px}
+  .cmpcard{background:rgba(255,255,255,.42);border:1px solid var(--accent);border-radius:8px;padding:15px 16px;margin-top:2px}
+  .cmp-gene{margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+  .cando{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:13px;padding-top:12px;border-top:1px solid var(--line-soft)}
+
+  #constellation{position:fixed;inset:0;z-index:8;display:none;align-items:center;justify-content:center;pointer-events:none}
+  body[data-mode="func"] #constellation{display:flex}
+  .const-inner{position:relative;width:min(70vh,540px);height:min(70vh,540px)}
+  .node{position:absolute;transform:translate(-50%,-50%);pointer-events:auto;cursor:pointer;
+    font-family:var(--mono);font-size:12px;color:var(--ink);background:var(--glass-deep);backdrop-filter:blur(8px);
+    border:1px solid var(--line);padding:6px 11px;border-radius:16px;transition:.25s;white-space:nowrap;box-shadow:0 4px 14px rgba(40,48,58,.16)}
+  .node:hover{border-color:var(--accent);transform:translate(-50%,-50%) scale(1.08)}
+  .node.match{color:#fff;border-color:var(--accent);background:var(--accent);box-shadow:0 0 22px rgba(90,95,140,.45)}
+  .node.dim{opacity:.3}
+
+  #exprHero{position:fixed;left:50%;top:52%;transform:translate(-50%,-50%);z-index:8;width:min(660px,90vw);display:none}
+  body[data-mode="expr"] #exprHero{display:block}
+  .ex-env{background:var(--glass-deep);backdrop-filter:blur(14px);border:1px solid var(--line);border-radius:9px;padding:14px 18px;margin-bottom:18px;text-align:center}
+  .ex-env .t{font-family:var(--display);font-weight:600;font-size:17px;color:#11161b;margin-bottom:5px}
+  .ex-env .c{font-family:var(--mono);font-size:11px;color:var(--ink-mid);line-height:1.6}
+  .ex-row{display:grid;grid-template-columns:84px 1fr 60px 78px 84px;align-items:center;gap:12px;padding:9px 14px;cursor:pointer;border:1px solid transparent;border-radius:7px}
+  .ex-row:hover{background:var(--glass);border-color:var(--line)}
+  .ex-g{font-family:var(--mono);font-weight:600;font-size:14px}
+  .ex-track{height:14px;background:rgba(255,255,255,.4);border:1px solid var(--line);border-radius:7px;overflow:hidden}
+  .ex-fill{height:100%;background:linear-gradient(90deg,rgba(79,108,134,.35),var(--accent));border-radius:7px;width:0;transition:width 1s cubic-bezier(.2,.8,.2,1)}
+  .ex-fc{font-family:var(--mono);font-size:14px;color:var(--accent);text-align:right}
+  .ex-pj{font-family:var(--mono);font-size:10px;color:#8a6a1f;text-align:right}
+  .ex-bm{font-family:var(--mono);font-size:10px;color:var(--ink-dim);text-align:right}
+  .ex-foot{font-family:var(--mono);font-size:10.5px;color:var(--ink-dim);text-align:center;margin-top:16px;line-height:1.6}
+
+  .status{position:fixed;bottom:9px;left:50%;transform:translateX(-50%);z-index:10;font-family:var(--mono);font-size:10px;color:var(--ink-dim);text-align:center;pointer-events:none;letter-spacing:.03em}
+  .status b{color:var(--ink-mid)}
+  .scramble{color:var(--accent)}
+  .loadmsg{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:30;font-family:var(--mono);color:var(--ink-mid);font-size:13px}
+
+  @media (max-width:980px){#rightPanel{width:320px}#leftPanel{width:290px}.caption{max-width:260px}}
+  @media (max-width:700px){nav{display:none}#rightPanel,#leftPanel{left:12px;right:12px;width:auto}
+    #rightPanel{top:62px;max-height:48vh}#leftPanel{bottom:12px;max-height:40vh}.caption{display:none}#cmpPanel{bottom:12px}}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+</style>
+</head>
+<body data-mode="lookup">
+
+<div id="scene"></div>
+<div id="grain"></div>
+<div class="vignette"></div>
+<div class="loadmsg" id="loadmsg">initializing helix…</div>
+
+<header>
+  <div class="brand">BioLab <b>Atlas</b></div>
+  <nav id="nav">
+    <button class="tab active" data-mode="lookup"><span class="k">01</span>Gene</button>
+    <button class="tab" data-mode="cross"><span class="k">02</span>Cross-species</button>
+    <button class="tab" data-mode="func"><span class="k">03</span>Function</button>
+    <button class="tab" data-mode="expr"><span class="k">04</span>Expression</button>
+  </nav>
+  <div class="spacer"></div>
+  <button class="hbtn" id="toggleLeft">Search</button>
+  <button class="hbtn" id="toggleRight">Detail</button>
+</header>
+
+<div id="intro"></div>
+<div class="caption hidden" id="caption"></div>
+<div class="hlabel" id="labelA"></div>
+<div class="hlabel" id="labelB"></div>
+
+<div id="compareBar"></div>
+<div id="constellation"><div class="const-inner" id="constInner"></div></div>
+<div id="exprHero"></div>
+
+<div class="panel hide" id="leftPanel">
+  <div class="ph"><span class="t" id="leftTitle">Search</span><span class="x" data-close="left">✕</span></div>
+  <div class="pbody" id="leftBody"></div>
+</div>
+<div class="panel hide" id="rightPanel">
+  <div class="ph"><span class="t" id="rightTitle">Gene detail</span><span class="x" data-close="right">✕</span></div>
+  <div class="pbody" id="rightBody"></div>
+</div>
+<div id="cmpPanel"></div>
+
+<div class="status" id="status"></div>
+
+<script>
+const GENES=[{"g":"recA","scope":"cons","pathway":"Homologous recombination","plain":"An enzyme that searches the genome for matching DNA and swaps strands between the pieces \u2014 the search-and-match engine of repair.","why":"After radiation shatters the chromosome into hundreds of fragments, RecA pairs each broken end with an intact matching copy so the genome can be rebuilt accurately. Central to how D. radiodurans survives doses lethal to most life.","tags":["homologous recombination","double-strand break repair","strand exchange"],"role":"RecA recombinase \u2014 ATP-dependent homologous strand exchange.","expr":{"fc":2.13,"padj":0.36,"base":27.7},"sp":{"DR1":{"locus":"DR_RS12030","len":1092,"seq":"ATGAGCAAGGACGCCACCAAAGAAATCTCCGCCCCCACCGACGCCAAGGAACGCAGCAAGGCCATCGAAACAGCCATGAGCCAGATCGAAAAGGCCTTCGGCAAGGGCTCGATCATGAAA","gc":66.1,"aa":363},"DDES":{"locus":"DEIDE_RS11150","len":1068,"seq":"ATGAGCAAAGACAGCACCAAGGAACTCTCCGCTCCCACCGACGCCCGCGAGCGTACCAAGGCGATCGAGACGGCCATGAGCCAGATCGAGAAGGCCTTCGGCAAGGGCAGCATCATGAAA","gc":63.0,"aa":355},"DGOB":{"locus":"DGO_RS14405","len":1071,"seq":"ATGAGCAAAGACGCCACCAAGGAAATCACTGCCCCCAGCGACGCCAAGGAACGCATGAAGGCCATCGAGACGGCCATGAGCCAGATCGAGAAGGCCTTCGGCAAGGGCAGCATCATGAAG","gc":67.1,"aa":356},"DGEO":{"locus":"DGEO_RS13490","len":1077,"seq":"ATGAGCAAGGACAACCCCAAGGACTTCGGTACCCCCAGTGACAGCAAGGAACGCCTCAAGGCCATCGAGACGGCCATGACCCAGATCGAAAAGGCGTTTGGCAAAGGCTCGATCATGCGC","gc":65.3,"aa":358},"TTH":{"locus":"TTH_RS09230","len":1023,"seq":"ATGGACGAGAGCAAGCGCAAGGCCCTGGAGAACGCCCTGAAGGCGATTGAGAAGGAGTTCGGCAAGGGGGCGGTGATGCGGCTGGGCGAGATGCCCAAGCAGCAGGTGGACGTGATCCCC","gc":70.3,"aa":340},"RXY":{"locus":"Rxycam_RS02285","len":1029,"seq":"TTGGACAAGAGCAAGGCGATAGACACCGCCGTATCGCAGATAGAACGTCAGTTTGGTAAGGGCTCGATCATGCGCATGGGCGACCGGGCTTCCCAGAAGGTCGCCTCCATCTCCACCGGC","gc":65.3,"aa":342},"KRAD":{"locus":"KRAD_RS03595","len":1047,"seq":"ATGCCCGCTCCTGCGGACCGCGAGAAGGCCCTCGACGCCGCCCTCGCAGCGATCGACAAGAACTTCGGCAAGGGCTCGGTCATGCGGCTGGGCGACGAGGTCCGTCCGCCGATCGAGGTC","gc":69.1,"aa":348},"CHRO":{"locus":"CHRO_RS08515","len":1077,"seq":"ATGGCTATTAACAATGATGTTGCTGGCAAGCAAAAAGCCCTGAATCTAGTCCTGAATCAAATCGAACGCAATTTCGGCAAAGGGGCGATCGTGCGCTTGGGAGATGCGACCCGAATGCGC","gc":48.3,"aa":358},"TGAM":null,"HALO":null,"PFUR":null,"EC":{"locus":"b2699","len":1062,"seq":"ATGGCTATCGACGAAAACAAACAGAAAGCGTTGGCGGCAGCACTGGGCCAGATTGAGAAACAATTTGGTAAAGGCTCCATCATGCGCCTGGGTGAAGACCGTTCCATGGATGTGGAAACC","gc":54.1,"aa":353}},"idt":{"DR1|DDES":91.3,"DR1|DGOB":92.7,"DR1|DGEO":88.3,"DR1|TTH":66.2,"DR1|RXY":61.7,"DR1|KRAD":57.8,"DR1|CHRO":53.6,"DR1|EC":57.5,"DDES|DGOB":92.1,"DDES|DGEO":90.7,"DDES|TTH":67.6,"DDES|RXY":62.0,"DDES|KRAD":59.2,"DDES|CHRO":55.2,"DDES|EC":58.1,"DGOB|DGEO":89.9,"DGOB|TTH":66.2,"DGOB|RXY":61.4,"DGOB|KRAD":57.8,"DGOB|CHRO":55.3,"DGOB|EC":58.1,"DGEO|TTH":68.8,"DGEO|RXY":62.9,"DGEO|KRAD":58.3,"DGEO|CHRO":55.0,"DGEO|EC":60.3,"TTH|RXY":62.6,"TTH|KRAD":60.3,"TTH|CHRO":59.7,"TTH|EC":60.9,"RXY|KRAD":66.1,"RXY|CHRO":61.7,"RXY|EC":61.7,"KRAD|CHRO":63.5,"KRAD|EC":64.1,"CHRO|EC":59.5}},{"g":"ddrA","scope":"deino","pathway":"DNA-end protection","plain":"A protective protein that caps the loose single-stranded ends of broken DNA so they aren't chewed away.","why":"Right after irradiation it shields exposed DNA ends, buying time for repair. One of the first Deinococcus 'mystery genes' shown by cross-species comparison to be a Rad52-like repair factor.","tags":["double-strand break repair","single-strand DNA end protection"],"role":"DdrA \u2014 Rad52-like 3\u2032 ssDNA-end protection.","expr":{"fc":3.08,"padj":0.087,"base":38.3},"sp":{"DR1":{"locus":"DR_RS02185","len":627,"seq":"ATGAAGCTGAGCGATGTCCAGAAACGACTGCAAGCCCCGTTTCCCGCTCATACCGTGAGCTGGAAGCCCGCCGCTTTCAACGCCGAGCGCACCCGCGCCCTGCTGCTGGCTCACGTGGAC","gc":69.1,"aa":208},"DDES":null,"DGOB":{"locus":"DGO_RS10305","len":597,"seq":"ATGAAACTGAGCGATGTCCAGAAACGACTTCAGGCCCCGTTTCCCGCTCATATGGTGGCGTGGAAGCCCGCCGCGTTCAACAAGGAACGCACCCGCGCGCTGATGCTGGCGCACATCGAC","gc":71.7,"aa":198},"DGEO":{"locus":"DGEO_RS07600","len":606,"seq":"ATGAAGTTGAGCGATGTTCAGAAACGACTCCAGGCCCCGTTTCCCGCTCACCTCGTGGGCTGGAAGGCCCAGGCCTTCAACAAGGAACGCACCCGCGCCCTGCTGCTGGCCTATGTCGAT","gc":66.7,"aa":201},"TTH":null,"RXY":null,"KRAD":null,"CHRO":null,"TGAM":null,"HALO":null,"PFUR":null,"EC":null},"idt":{"DR1|DGOB":84.3,"DR1|DGEO":83.1,"DGOB|DGEO":81.8}},{"g":"ddrB","scope":"deino","pathway":"Single-strand annealing","plain":"A protein that coats single-stranded DNA and helps matching pieces find each other and rejoin.","why":"Drives a fast, early route to rejoin broken DNA (single-strand annealing) especially important in Deinococcus.","tags":["single-strand DNA binding","single-strand annealing","double-strand break repair"],"role":"DdrB \u2014 ssDNA-binding, single-strand annealing.","expr":{"fc":2.61,"padj":0.2,"base":153.3},"sp":{"DR1":{"locus":"DR_RS00370","len":567,"seq":"ATGTTGCAGATTGAATTTATCACCGACCTGGGTGCGCGGGTCACGGTGAACGTGGAGCATGAAAGCCGGTTGCTGGACGTACAGCGCCACTATGGCCGCCTGGGCTGGACCAGCGGCGAG","gc":68.3,"aa":188},"DDES":null,"DGOB":null,"DGEO":null,"TTH":null,"RXY":null,"KRAD":null,"CHRO":null,"TGAM":null,"HALO":null,"PFUR":null,"EC":null},"idt":{}},{"g":"pprA","scope":"deino","pathway":"Break-end binding / ligation","plain":"A protein that grabs the two ends of a double-strand break and helps seal them shut.","why":"Stimulates the DNA-ligase step that re-seals breaks; a signature Deinococcus radiation factor \u2014 removing it sharply lowers radiation survival.","tags":["double-strand break repair","DNA ligation"],"role":"PprA \u2014 binds DSB ends, stimulates ligase.","expr":{"fc":2.86,"padj":0.23,"base":31.5},"sp":{"DR1":{"locus":"DR_RS15335","len":903,"seq":"GTGCTACCCCTGGCCTTTTTAATCTGTTCAGGGCATAATAAAGGCAGTATGGCAAGGGCTAAAGCAAAAGACCAAACGGACGGCATCTACGCCGCCTTCGACACCTTGATGAGCACGGCG","gc":69.5,"aa":300},"DDES":null,"DGOB":null,"DGEO":null,"TTH":null,"RXY":null,"KRAD":null,"CHRO":null,"TGAM":null,"HALO":null,"PFUR":null,"EC":null},"idt":{}},{"g":"uvrA","scope":"cons","pathway":"Nucleotide excision repair","plain":"The damage scout of a repair crew that cuts bulky lesions out of DNA.","why":"Recognizes UV- and chemical-damaged spots and flags them for removal \u2014 first step of nucleotide excision repair.","tags":["nucleotide excision repair","damage recognition"],"role":"UvrA \u2014 UvrABC damage recognition (2 paralogs).","expr":{"fc":1.84,"padj":0.39,"base":61.7,"note":"two paralogs in R1 (+1.84, +2.39)"},"sp":{"DR1":{"locus":"DR_RS09060","len":3051,"seq":"ATGCAAGACAAACTCATCGTGCGCGGCGCCCGGGAACACAACCTCAAGGACATCACCGTGGAGCTGCCCCGCGACCGCTTCGTGGTGATTACCGGCGTGTCGGGCAGCGGCAAGTCCACG","gc":65.7,"aa":1016},"DDES":{"locus":"DEIDE_RS07360","len":3015,"seq":"TTGCAGAACAACCTGATCGTGCGCGGCGCACGCGAACACAACCTGAAGAACATCACGGTCGAGCTTCCCCGCGACCAGTTCGTGGTGATTACTGGCGTCTCGGGAAGCGGCAAAAGCACG","gc":63.1,"aa":1004},"DGOB":{"locus":"DGO_RS05120","len":3063,"seq":"TTGCAGAACAACCTGATCGTGCGCGGCGCGCGGGAACACAACCTCAAGGACATCACGGTGGAGCTGCCGCGCGACCGTTTCGTGGTGATCACCGGCGTGTCGGGCAGCGGCAAGAGCACG","gc":68.5,"aa":1020},"DGEO":{"locus":"DGEO_RS06180","len":3015,"seq":"TTGCAAAACCAGCATCTGATTGTGCGCGGGGCACGGGAACACAACCTCAAAAACGTGACGGTGGAGTTGCCGCGTGACCGGTTCGTGGTGATCACCGGGGTGTCGGGCAGCGGCAAGAGC","gc":64.8,"aa":1004},"TTH":{"locus":"TTH_RS07290","len":2859,"seq":"ATGGACCGCATCGTCATCCGGGGCGCTCGGGAGCACAACCTGAAGAACATCAGCCTGGAGCTTCCCCGGGGCAAGTTCATCGTCATCACCGGGGTTTCCGGCTCGGGGAAAAGCACCTTG","gc":68.2,"aa":952},"RXY":{"locus":"Rxycam_RS04815","len":2850,"seq":"ATAGCCGAGAGCCACATAGTCGTCCGGGGGGCGCGCGAGCACAACCTGAAGAACGTCACCGTCTCCATCCCGCGCGATGTGCTGGTCGTGGTCACCGGGCTCTCCGGTAGCGGGAAGTCG","gc":67.6,"aa":949},"KRAD":{"locus":"KRAD_RS19350","len":2895,"seq":"GTGGCCTCCGCGCGGGTGGCCGACGACCGCCTGGTCGTGCGCGGCGCGCGCGAGCACAACCTCAAGAACGTCTCCGTCGACCTGCCCCGCGACAGCCTCGTCGTCTTCACCGGCCTGTCC","gc":71.1,"aa":964},"CHRO":{"locus":"CHRO_RS24810","len":3024,"seq":"ATGAATTACCGTCCCGATGCAAAGATTGAAGTCACTGAATCCGCAAACGGGCATCATGCAGATACTTCTAACCCTAATAGCCAAAATACCATCCGCATTCGCGGCGCGAGACAGCATAAT","gc":46.6,"aa":1007},"TGAM":null,"HALO":{"locus":"VNG_RS10310","len":2949,"seq":"ATGAGCGAAGAGTACATCGAGGTCCGTGGCGCCGAAGAACACAACCTCACGGACCTCGACGTGGAGCTTCCCCGCGAGTCGCTGAACGTCGTCACGGGGCTGTCCGGATCCGGGAAGTCG","gc":67.7,"aa":982},"PFUR":null,"EC":{"locus":"b4058","len":2823,"seq":"ATGGATAAGATCGAAGTTCGGGGCGCCCGCACCCATAATCTCAAAAACATCAACCTCGTTATCCCCCGCGACAAGCTCATTGTCGTGACCGGGCTTTCGGGTTCTGGCAAATCCTCGCTC","gc":56.1,"aa":940}},"idt":{"DR1|DDES":87.9,"DR1|DGOB":86.4,"DR1|DGEO":85.3,"DR1|TTH":71.2,"DR1|RXY":58.6,"DR1|KRAD":59.1,"DR1|CHRO":53.3,"DR1|HALO":56.1,"DR1|EC":58.0,"DDES|DGOB":87.8,"DDES|DGEO":87.5,"DDES|TTH":71.3,"DDES|RXY":60.2,"DDES|KRAD":59.4,"DDES|CHRO":54.0,"DDES|HALO":56.7,"DDES|EC":57.1,"DGOB|DGEO":87.2,"DGOB|TTH":71.0,"DGOB|RXY":60.2,"DGOB|KRAD":59.9,"DGOB|CHRO":54.6,"DGOB|HALO":56.4,"DGOB|EC":58.1,"DGEO|TTH":71.4,"DGEO|RXY":60.9,"DGEO|KRAD":59.2,"DGEO|CHRO":54.1,"DGEO|HALO":54.5,"DGEO|EC":57.6,"TTH|RXY":62.0,"TTH|KRAD":60.6,"TTH|CHRO":58.8,"TTH|HALO":58.8,"TTH|EC":59.3,"RXY|KRAD":64.1,"RXY|CHRO":59.2,"RXY|HALO":58.2,"RXY|EC":58.7,"KRAD|CHRO":58.3,"KRAD|HALO":56.1,"KRAD|EC":57.1,"CHRO|HALO":52.1,"CHRO|EC":56.1,"HALO|EC":53.8}},{"g":"uvrB","scope":"cons","pathway":"Nucleotide excision repair","plain":"The verifier and unwinding partner of UvrA that confirms a lesion and sets up the cut.","why":"Works with UvrA to excise damaged DNA so it can be resynthesized cleanly.","tags":["nucleotide excision repair","helicase"],"role":"UvrB \u2014 UvrABC helicase / lesion verification.","expr":{"fc":2.43,"padj":0.16,"base":57.6},"sp":{"DR1":{"locus":"DR_RS11695","len":2016,"seq":"ATGCTCAAAGTCCGCTCCGAATTCAAACCGTCCGGCGACCAGCCCACCGCCATCGCGTCCCTGGTGGACGGACTGGAAAGTGGGCTGAGGTATCAGACCCTGCTGGGCGCGACGGGCACC","gc":64.6,"aa":671},"DDES":{"locus":"DEIDE_RS01770","len":2016,"seq":"ATGCTCAAGGTCAAATCCGCATTTACCCCGTCTGGCGACCAGCCCACTGCGATCCGTTCCCTGGTGGACGGCCTGGACAGCGGCCTGCGCTTCCAGACGCTGCTGGGAGCCACCGGTACC","gc":63.7,"aa":671},"DGOB":{"locus":"DGO_RS04295","len":2016,"seq":"ATGTTAAGCGTCAAGTCCGAATTCACGCCGTCGGGAGACCAGCCGACCGCCATCCGATCGCTCGTGGACGGCCTGGACTCGGGCCTGCGCTTCCAGACGCTGCTGGGCGCGACCGGCACC","gc":66.9,"aa":671},"DGEO":{"locus":"DGEO_RS12215","len":2031,"seq":"ATGCTGAAGGTCAAGTCTGACTTCAAACCGTCCGGTGACCAGCCCACCGCTATCCGCAGCCTGGTCGACGGTCTAGCGTCGGGCCTGCGGTTTCAGACGCTGCTGGGGGCGACGGGCACG","gc":64.9,"aa":676},"TTH":{"locus":"TTH_RS09595","len":1998,"seq":"ATGACCTTCCGCTACCGGGGGCCAAGCCCCAAGGGGGACCAGCCCAAGGCCATCGCCGGGCTCGTGGAGGCCTTGAGGGACGGGGAGCGCTTCGTCACCCTCCTCGGGGCCACGGGCACG","gc":66.1,"aa":665},"RXY":{"locus":"Rxycam_RS04835","len":2007,"seq":"ATCGGAACACCTAGCAGCAGCGGCTTCCAGGTAAGCAGCGAGTACCGGCCCACCGGCGACCAGCCGCAGGCCATAGAGCGCCTCGCAGAGGGGGTGGAATCCGGGCTGCGGGCGCAGACG","gc":66.6,"aa":668},"KRAD":{"locus":"KRAD_RS19340","len":2127,"seq":"ATGCGGCCGACGACAGACATCGAGCGCCGGGTGGCGCCCTTCGAGGTGGTCTCCGAGTTCTCCCCCTCCGGGGACCAGCCCACGGCCATCGCCGAGCTCGCCCGGCGGGTGAACGCCGGG","gc":69.9,"aa":708},"CHRO":{"locus":"CHRO_RS07305","len":1998,"seq":"ATGATGCAATTTAGCCTTCAAGCGCCGTTTGCACCTACAGGCGATCAACCGTCGGCGATCGCTCAACTTGTAAAGTCCATTCAAGCCGGACATCGTTACCAAACTTTACTTGGAGCTACG","gc":48.0,"aa":665},"TGAM":null,"HALO":{"locus":"VNG_RS09355","len":2070,"seq":"ATGAGTGACGCCAGCGGCCCCCTCCAGCCGGACCGACCCGAGGCCGACGTGCCGTTCCGCGTCGAAGCGCCCTTCGACCCGGCGGGCGACCAGCCCGACGCCATCGCGGAACTGGTCGCG","gc":67.9,"aa":689},"PFUR":null,"EC":{"locus":"b0779","len":2022,"seq":"ATGAGTAAACCGTTCAAACTGAATTCCGCTTTTAAACCTTCTGGCGATCAGCCAGAGGCGATTCGACGTCTCGAAGAGGGGCTGGAAGATGGCCTGGCGCACCAGACGTTACTTGGCGTG","gc":53.6,"aa":673}},"idt":{"DR1|DDES":90.0,"DR1|DGOB":90.8,"DR1|DGEO":86.7,"DR1|TTH":65.7,"DR1|RXY":59.1,"DR1|KRAD":58.0,"DR1|CHRO":54.9,"DR1|HALO":55.1,"DR1|EC":55.6,"DDES|DGOB":91.7,"DDES|DGEO":87.9,"DDES|TTH":65.0,"DDES|RXY":58.5,"DDES|KRAD":56.2,"DDES|CHRO":55.3,"DDES|HALO":54.2,"DDES|EC":56.6,"DGOB|DGEO":87.8,"DGOB|TTH":65.0,"DGOB|RXY":58.7,"DGOB|KRAD":56.0,"DGOB|CHRO":54.6,"DGOB|HALO":53.7,"DGOB|EC":55.7,"DGEO|TTH":66.3,"DGEO|RXY":59.6,"DGEO|KRAD":57.5,"DGEO|CHRO":56.1,"DGEO|HALO":54.6,"DGEO|EC":56.0,"TTH|RXY":59.7,"TTH|KRAD":57.7,"TTH|CHRO":57.0,"TTH|HALO":55.5,"TTH|EC":55.6,"RXY|KRAD":62.3,"RXY|CHRO":62.0,"RXY|HALO":55.1,"RXY|EC":59.4,"KRAD|CHRO":57.3,"KRAD|HALO":54.4,"KRAD|EC":56.9,"CHRO|HALO":53.1,"CHRO|EC":59.7,"HALO|EC":53.3}},{"g":"ddrC","scope":"deino","pathway":"Nucleoid protection","plain":"A protein that packs and protects the genome while the cell is recovering.","why":"Helps condense and shield DNA during repair, limiting further damage.","tags":["nucleoid protection","genome organization"],"role":"DdrC \u2014 nucleoid-associated genome protection.","expr":null,"sp":{"DR1":{"locus":"DR_RS00015","len":696,"seq":"ATGAAGAACGCTCCGCTGACCCTCAATTTCGGCTCCGTGCGGCTGCCTGTCAGCGCGGACGGTTTGCTTCACGCCCCCACCGCCCAGCAGCAGCTCGGGCTCACCCAAAGCTGGGAAGCG","gc":71.1,"aa":231},"DDES":{"locus":"DEIDE_RS13290","len":699,"seq":"ATGAAGAGCCTTCCTAACACCCTTGACTTTGGCAACGTCAGGCTGCCCGTCAGTGCGGACGGCCTGCTGCACGCCACGACCGCCCTGGCCCATCTGGGCCTCGAAACTCCCGAACAGTGG","gc":68.2,"aa":232},"DGOB":{"locus":"DGO_RS00365","len":699,"seq":"ATGAAGAACGCCTCTCTGACCCTGGAATTCGGCACGGTCCGCCTGCCTGTCAGCGCGGACGGTCTCCTGCATGCGCCCACGGCCCTGGGCCAGCTGGGCCTCGACCCGGCCGACTGGACC","gc":75.0,"aa":232},"DGEO":{"locus":"DGEO_RS02820","len":690,"seq":"ATGAAGACCGCGCCCATCACGCTTGAATTCGGCACGCAGCGGCTGCCCGCCAGCGCGGATGGTTTGCTGCATGCCGCGACTGCCCTGAAGACTCTGGGCGTGCCCCTGCCGGAGGACTGG","gc":70.7,"aa":229},"TTH":null,"RXY":null,"KRAD":null,"CHRO":null,"TGAM":null,"HALO":null,"PFUR":null,"EC":null},"idt":{"DR1|DDES":68.4,"DR1|DGOB":73.2,"DR1|DGEO":65.9,"DDES|DGOB":75.0,"DDES|DGEO":75.1,"DGOB|DGEO":74.2}},{"g":"ddrD","scope":"deino","pathway":"Radiation-response (uncharacterized)","plain":"A strongly radiation-induced protein whose exact job is still unknown.","why":"Switches on hard after irradiation, making it a prime candidate for an uncharacterized repair function \u2014 the kind this atlas exists to investigate.","tags":["radiation-induced","uncharacterized"],"role":"DdrD \u2014 RDR-induced; role being characterized.","expr":null,"sp":{"DR1":{"locus":"DR_RS01690","len":597,"seq":"ATGGATACCCTGAAAAAAGCTGGAACGATGCTCGCCCACCTCGACCTCTTTCACTCGATGCTCGACCTGCGGCGGCTGCTGCAACTCGCGGCGTACATGAAGGAGCGCGGCGACCGGGCC","gc":70.5,"aa":198},"DDES":null,"DGOB":null,"DGEO":null,"TTH":null,"RXY":null,"KRAD":null,"CHRO":null,"TGAM":null,"HALO":null,"PFUR":null,"EC":null},"idt":{}},{"g":"irrE","scope":"deino","pathway":"Master regulation","plain":"The master switch that turns the whole radiation-response program on.","why":"After damage, IrrE cuts a repressor (DdrO), releasing the entire radiation/desiccation gene set at once. A top-level controller found in Deinococcus and relatives.","tags":["regulation","master switch","protease"],"role":"IrrE/PprI \u2014 protease master regulator.","expr":null,"sp":{"DR1":{"locus":"DR_RS00860","len":987,"seq":"GTGCCCAGTGCCAACGTCAGCCCCCCTTGCCCCTCTGGGGTAAGGGGCGGGGGGATGGGGCCAAAAGCTAAAGCTGAAGCCTCCAAGCCCCACCCCCAAATCCCTGTTAAGCTCCCATTC","gc":69.2,"aa":328},"DDES":null,"DGOB":null,"DGEO":null,"TTH":null,"RXY":null,"KRAD":null,"CHRO":null,"TGAM":null,"HALO":null,"PFUR":null,"EC":null},"idt":{}},{"g":"recN","scope":"cons","pathway":"Break-end tethering","plain":"A protein that holds the two ends of a break together so they don't drift apart.","why":"Tethers and aligns double-strand break ends so repair enzymes can rejoin them.","tags":["double-strand break repair","DNA end tethering"],"role":"RecN \u2014 SMC-like DNA-end tethering.","expr":null,"sp":{"DR1":{"locus":"DR_RS07565","len":1695,"seq":"GTGACCCGCAAGGCCCGTACCCCCAAAGCCGCCCCCGTTCCCGAAGCTGTCGCTGTGGTCGAGCCGCCGCCCCCGGACGCCGCACCCACCGGCCCCCGGCTCTCGCGGCTGGAAATTCGC","gc":70.2,"aa":564},"DDES":null,"DGOB":{"locus":"DGO_RS07550","len":1689,"seq":"GTGACCCGCAAGGCCCGCACCCCCACCCAGGACGCCCCCGCCCGGCGGTCCACGCCTCCTTCCGCCGTGTCCGGCCCCGCGCCGGGGCCCGCCGGTCCCGGCATCGCCCGGCTGGAGGTC","gc":74.4,"aa":562},"DGEO":{"locus":"DGEO_RS08655","len":1668,"seq":"GTGACCCGCAAGGCCCGTGCCGCCACCGCACCACCCGTGCCGCCTACCCCAGCTCCGGCGGGACCGCAGCTGTCCCGATTGGAGGTCCGCAATCTCGCCACCATCCGTGACCTGACGCTG","gc":69.7,"aa":555},"TTH":null,"RXY":{"locus":"Rxycam_RS02435","len":1707,"seq":"GTGGCGAGCGGTGCGGAGGACCTTTCTGTAGTGCTCTCGGAGATCTCCGTTCGGAACGTGGCCCTGATCGAGTCCGCCACCCTGCGGCTCTCGCCGGGCCTGAACGCGGTGACGGGGGAG","gc":73.5,"aa":568},"KRAD":{"locus":"KRAD_RS18275","len":1836,"seq":"GTGATCGAGGAGATCCGCATCCGCTCCCTGGGGGTCATCCGCGACGCCCGACTGCCCCTGGGGCCGGGGCTGACCGTCATCACCGGTGAGACCGGCGCGGGCAAGACGATGGTCGTCACC","gc":78.2,"aa":611},"CHRO":{"locus":"CHRO_RS03830","len":1905,"seq":"ATGTTAATCTCCCTCCAGATTGAAAACTTTGCTTTAATTGACCAGCTGGAGTTGGAATTCGGCACTGGTCTGAATGTCCTCACAGGCGAAACTGGTGCTGGTAAATCGATTATTTTGGAT","gc":48.6,"aa":634},"TGAM":null,"HALO":null,"PFUR":null,"EC":{"locus":"b2616","len":1662,"seq":"ATGTTGGCACAACTGACCATCAGCAACTTTGCTATCGTTCGTGAGCTTGAGATTGATTTTCATAGCGGCATGACCGTAATAACTGGCGAGACCGGCGCGGGTAAATCTATTGCAATAGAT","gc":51.8,"aa":553}},"idt":{"DR1|DGOB":72.2,"DR1|DGEO":73.0,"DR1|RXY":35.6,"DR1|KRAD":36.9,"DR1|CHRO":33.7,"DR1|EC":32.4,"DGOB|DGEO":72.6,"DGOB|RXY":35.9,"DGOB|KRAD":37.7,"DGOB|CHRO":33.5,"DGOB|EC":30.9,"DGEO|RXY":37.5,"DGEO|KRAD":37.5,"DGEO|CHRO":34.2,"DGEO|EC":32.5,"RXY|KRAD":42.8,"RXY|CHRO":32.7,"RXY|EC":34.4,"KRAD|CHRO":31.4,"KRAD|EC":34.2,"CHRO|EC":34.5}},{"g":"recF","scope":"cons","pathway":"RecA loading (RecFOR)","plain":"A helper that loads the RecA repair enzyme onto DNA at the right spot.","why":"Part of the RecFOR pathway that starts recombination at single-strand gaps.","tags":["homologous recombination","RecA loading"],"role":"RecF \u2014 RecFOR-pathway RecA loading.","expr":null,"sp":{"DR1":{"locus":"DR_RS05615","len":1080,"seq":"ATGGGGGATGTGCGTCTCTCGGCCCTGTCTACCCTGAATTACCGGAATCTTGCGCCTGGGACGCTGAATTTCCCGGAAGGCGTGACCGGGATTTATGGGGAGAACGGAGCTGGCAAGACC","gc":69.3,"aa":359},"DDES":{"locus":"DEIDE_RS08250","len":1092,"seq":"ATGCGAGGCGTGCAACTGGAGTCGCTGTCCACCCTCAATTACCGGAATCTCGCGCCCTGTACGCTGAGCTTCCCGGCTGGGGTGACTGGTGTCTTCGGCGAGAACGGCGCCGGCAAGACC","gc":69.7,"aa":363},"DGOB":{"locus":"DGO_RS11035","len":1071,"seq":"ATCGGGGGCGTGCTGCTCTCGGGCCTGTCTACCCTGAACTACCGGAACCTCGCGCCGGACACGCTGGAATTTCCGGCCGGCGTGACCGGTGTGTTCGGCGAGAACGGCGCGGGCAAGACC","gc":72.8,"aa":356},"DGEO":{"locus":"DGEO_RS10835","len":1077,"seq":"ATGTCCGGTGTGCAGCTCTCGTCCCTCTCCACCCTGAATTACCGGAATCTCGCGCCCGGCACGCTTCATTTTCCGGCGGGCGTGACGGGCGTGTTTGGGGAAAACGGAGCGGGCAAGACA","gc":68.8,"aa":358},"TTH":{"locus":"TTH_RS01400","len":1032,"seq":"ATGCGGCTTCTCCTCTTCCGGCAACGGAACTTCCGCAACCTGGCCCTGGAGGCCTACCGCCCCCCGCCGGGCCTTTCCGCCCTGGTGGGGGCCAACGCCCAGGGGAAGACGAGCCTCCTC","gc":74.8,"aa":343},"RXY":{"locus":"Rxycam_RS10180","len":1125,"seq":"TTGAGCGCCTACATCCGGGCCGTCCGGCTCGTGAACTTCCGGAACTACGCCGGCGCGACGGCCCTCCTCGCGCCGGGGCTGAACGTGCTCGTCGGGGAGAACGCCCAGGGCAAGACGAAC","gc":67.5,"aa":374},"KRAD":{"locus":"KRAD_RS11175","len":1176,"seq":"GTGCACGTCGCGCACCTCTCGCTCGTCGACTACCGCTCGTACCCGACCCTCGAGCTGGACCTGCGTCCGGGGACGACGACCTTCGTCGGCCTGAACGGGCAGGGCAAGACCAACCTGGTC","gc":75.7,"aa":391},"CHRO":{"locus":"CHRO_RS19880","len":1104,"seq":"TTGAAGCAATTTCGGAATTATCAGGAGCAGCGAGTTGATTTCGTTGCTCCTAAAACAATATTGGTGGGTAATAACGCTCAGGGTAAATCCAATTTATTAGAAGCAGTGGAATTGCTGGCA","gc":46.9,"aa":367},"TGAM":null,"HALO":null,"PFUR":null,"EC":{"locus":"b3700","len":1074,"seq":"ATGTCCCTCACCCGCTTGTTGATCCGCGATTTCCGCAACATTGAAACCGCGGATCTCGCCTTATCTCCCGGCTTTAACTTTCTGGTAGGTGCCAACGGCAGTGGCAAAACCAGCGTGCTG","gc":55.0,"aa":357}},"idt":{"DR1|DDES":80.2,"DR1|DGOB":84.3,"DR1|DGEO":83.0,"DR1|TTH":42.6,"DR1|RXY":34.0,"DR1|KRAD":41.2,"DR1|CHRO":34.0,"DR1|EC":29.1,"DDES|DGOB":86.2,"DDES|DGEO":85.2,"DDES|TTH":42.0,"DDES|RXY":34.4,"DDES|KRAD":40.2,"DDES|CHRO":34.7,"DDES|EC":29.1,"DGOB|DGEO":87.4,"DGOB|TTH":42.9,"DGOB|RXY":33.7,"DGOB|KRAD":42.1,"DGOB|CHRO":34.0,"DGOB|EC":31.7,"DGEO|TTH":42.3,"DGEO|RXY":34.4,"DGEO|KRAD":39.4,"DGEO|CHRO":33.0,"DGEO|EC":30.8,"TTH|RXY":35.0,"TTH|KRAD":39.9,"TTH|CHRO":37.3,"TTH|EC":28.9,"RXY|KRAD":34.2,"RXY|CHRO":33.0,"RXY|EC":30.3,"KRAD|CHRO":35.4,"KRAD|EC":29.1,"CHRO|EC":25.5}},{"g":"recQ","scope":"cons","pathway":"Recombination processing","plain":"A helicase \u2014 a motor that unwinds the DNA double helix.","why":"Opens and untangles DNA and repair intermediates so they can be processed correctly.","tags":["helicase","homologous recombination"],"role":"RecQ \u2014 helicase, intermediate processing.","expr":null,"sp":{"DR1":{"locus":"DR_RS06640","len":2475,"seq":"ATGACCGCTGCTCCTGCCGCCCTCCACGACCGCGCCCTGCATCTGCTCCAGACCATCTGGGGCTATCCGGCCTTCCGGGGCGTGCAGGGCGAGATCGTGCAGCAGGTGGCGGAAGGTGGC","gc":68.4,"aa":824},"DDES":{"locus":"DEIDE_RS06535","len":2196,"seq":"ATGACTGCTGTCTCCCCCGCTTCACCTACCCAAGCCCTGGAGGTCCTGAACCGGGTCTGGGGTTACAGCGCGTTCCGCGGCGTTCAGGCCGAAATCGTCCGGACAGTGACCGATGGGGGC","gc":65.6,"aa":731},"DGOB":{"locus":"DGO_RS09035","len":1932,"seq":"ATGCAGGAGTGTGAAAAATCCCCTGTTCAGGCCTGGAATGGTCCATCGGGGGGCCTGAAGGCGAAGCGGAAGACCTGCGGCAGCCTGCCTCCACGCCGGGCGGTGGCCGGGGGCGAGGAA","gc":71.9,"aa":644},"DGEO":null,"TTH":null,"RXY":null,"KRAD":null,"CHRO":{"locus":"CHRO_RS26520","len":2127,"seq":"ATGCCTCGGTTTCAATCCCTGGAAGCAGCACTCAAACACTACTTCGGCTACGATAGCTTCCGCCCTGGACAAAAACAAATCGTCGAACAAGCGCTGCAAAATCGGGATCAACTGATTGTC","gc":43.3,"aa":708},"TGAM":null,"HALO":null,"PFUR":null,"EC":{"locus":"b3822","len":1830,"seq":"GTGGCGCAGGCGGAAGTGTTGAATCTGGAGTCCGGAGCTAAACAGGTTTTACAAGAAACCTTTGGCTACCAACAGTTTCGCCCCGGCCAGGAAGAAATTATCGACACTGTGCTTTCCGGC","gc":55.1,"aa":609}},"idt":{"DR1|DDES":74.0,"DR1|DGOB":72.7,"DR1|CHRO":41.5,"DR1|EC":47.1,"DDES|DGOB":73.6,"DDES|CHRO":41.5,"DDES|EC":47.3,"DGOB|CHRO":40.7,"DGOB|EC":47.0,"CHRO|EC":47.0}},{"g":"ruvB","scope":"cons","pathway":"Holliday-junction resolution","plain":"A molecular motor that moves the point where two DNA strands cross over.","why":"Drives the late step of recombination that resolves crossed-over DNA into two clean copies.","tags":["homologous recombination","Holliday junction"],"role":"RuvB \u2014 Holliday-junction branch migration.","expr":null,"sp":{"DR1":{"locus":"DR_RS03100","len":1002,"seq":"ATGACTGCCCCCGAGAATCTGGACGCCGCCCTGCGTCCCAAGACCCTGACCGAGTACGTCGGGCAGGAAAAGCTCAAGGACAAGCTGGGCGTGTACCTGCAAGCGGCCCGTGGGCGCCGT","gc":66.8,"aa":333},"DDES":{"locus":"DEIDE_RS10550","len":1005,"seq":"ATGACTGATCCCGCTACCCATCTGGACGCCGCCCTGCGTCCGAAAACCCTGACAGAGTATGTGGGGCAGGAAAAGCTGAAGGACAAGCTTGGGGTCTATCTGCAAGCCGCCAAGGGCCGG","gc":65.2,"aa":334},"DGOB":{"locus":"DGO_RS12715","len":999,"seq":"ATGACCGAGCCGCTCGACGCCGCATTGCGGCCCAAAGGGCTGTCCGAATACGTCGGGCAGGAAAAACTCAAGGACAAGCTGGGCGTGTATCTCCAGGCCGCCAAGGGCCGCCGCGAGGCG","gc":70.1,"aa":332},"DGEO":{"locus":"DGEO_RS04675","len":996,"seq":"ATGACCGAACCGCTCGACGCCGCCCTGCGCCCCAAGAGCCTTGCGGAGTATGTGGGTCAGGCGCGGCTCAAGGAAAAACTGGGGGTGTATCTCCAGGCTGCCAAGGGCCGCAAAGAGGCC","gc":64.8,"aa":331},"TTH":{"locus":"TTH_RS02120","len":975,"seq":"GTGGAAGACCTCGCCCTTAGGCCCAAGACCCTGGACGAGTACATCGGCCAGGAGCGCCTGAAGCAAAAGCTCCGGGTCTACCTCGAGGCGGCCAAGGCCCGAAAAGAGCCCTTGGAGCAC","gc":70.1,"aa":324},"RXY":{"locus":"Rxycam_RS01810","len":1068,"seq":"ATGGAGGAGATGGACGACTTCACCGTGCGCCGGGGAGAGCGCGAGGATATAACCGGGGCCGCCGGGCCGCCCGGGGAGCGGCCGCTGGACCCGGCGGCCTTCGAGGAGGACGACGAGCCC","gc":69.5,"aa":355},"KRAD":{"locus":"KRAD_RS18770","len":1068,"seq":"ATGGAGGACCGGCTGGTGACCACCGGCGCCGACGAGCGCGAACGCGCGGCCGAGTCGGCGCTGCGTCCGCACGGCCTCGACGAGTTCGTCGGGCAGAAGGTCGTGCGCGAGCAGCTCGCC","gc":75.5,"aa":355},"CHRO":{"locus":"CHRO_RS02115","len":1116,"seq":"ATGGCAATTATCTCCTCTAAACAACCGTCAGAACCTTCTAAGCCTGCAAAAAAGCAACAGAAGAAACCTCAACCTCAGCCTGTCATAGAGGATTTGTTGCAACCGCAGGCAACTGTGGAG","gc":48.0,"aa":371},"TGAM":null,"HALO":null,"PFUR":null,"EC":{"locus":"b1860","len":1011,"seq":"ATGATTGAAGCAGACCGTCTGATTTCTGCCGGTACCACTTTGCCGGAAGATGTAGCAGATCGCGCCATTCGCCCCAAATTACTGGAAGAGTATGTTGGTCAGCCGCAGGTTCGTTCACAG","gc":52.7,"aa":336}},"idt":{"DR1|DDES":93.1,"DR1|DGOB":94.0,"DR1|DGEO":91.2,"DR1|TTH":73.5,"DR1|RXY":56.8,"DR1|KRAD":52.3,"DR1|CHRO":52.3,"DR1|EC":55.0,"DDES|DGOB":92.8,"DDES|DGEO":92.4,"DDES|TTH":73.1,"DDES|RXY":58.1,"DDES|KRAD":52.7,"DDES|CHRO":52.7,"DDES|EC":55.4,"DGOB|DGEO":91.8,"DGOB|TTH":73.5,"DGOB|RXY":57.5,"DGOB|KRAD":54.2,"DGOB|CHRO":52.4,"DGOB|EC":55.1,"DGEO|TTH":74.1,"DGEO|RXY":59.5,"DGEO|KRAD":55.0,"DGEO|CHRO":53.8,"DGEO|EC":55.0,"TTH|RXY":60.2,"TTH|KRAD":56.8,"TTH|CHRO":54.6,"TTH|EC":55.2,"RXY|KRAD":53.0,"RXY|CHRO":53.8,"RXY|EC":54.5,"KRAD|CHRO":49.6,"KRAD|EC":52.4,"CHRO|EC":55.4}},{"g":"mutS","scope":"cons","pathway":"Mismatch repair","plain":"A proofreader that spots mismatched or mispaired DNA bases.","why":"Catches errors so repair and recombination stay accurate.","tags":["mismatch repair","damage recognition"],"role":"MutS \u2014 mismatch recognition.","expr":null,"sp":{"DR1":{"locus":"DR_RS05355","len":2479,"seq":"ATGCTCGAGCAGTACGTTGCCATGCGCGACGAGGTGGCCGCGCAGCTGCCGCACGCCGTGCTGCTCTTTCAGGTGGGCGACTTTTACGAGACCTTCGGCGAAGACGCCGAGCGCACCGCC","gc":70.4,"aa":213},"DDES":{"locus":"DEIDE_RS08985","len":2550,"seq":"ATGCGAGCAGCGCAGAGTGTATTGAAAGGAACCGGGTCGGGGTCGCTGCCGCCGATGCTGGATCAATATGTGCGCATGCGGGACGAAGTTGCCCAGCAGTTGCCTCATGCCATCTTGCTG","gc":67.6,"aa":849},"DGOB":{"locus":"DGO_RS12125","len":2478,"seq":"ATGCTCGAACAGTACGTGCGGATGCGCGACGAGGTGGCGGCGCAGCTGCCGCACGCCATCCTGCTGTTTCAGGTGGGGGACTTCTACGAGACCTTCGGGGAGGACGCCGAGCGCGCCGCC","gc":74.3,"aa":825},"DGEO":{"locus":"DGEO_RS10400","len":2574,"seq":"ATGCCGGTGGGGGTGCCGCAAAATGTCTTGAAGGGAACGGGGTCGGGAGTGCTGCCGCCGATGCTCGAACAGTACGTGGCCCTGCGCGACGCCCATCCCGATTTCCTGCTCCTGTTTCAG","gc":70.4,"aa":857},"TTH":{"locus":"TTH_RS06705","len":2436,"seq":"ATGGAAGGCATGCTCAAGGGCGAAGGCCCAGGTCCACTTCCCCCTCTTCTGCAGCAGTACGTGGAGCTCCGCGACCGCTACCCGGACTACCTCCTCCTCTTCCAGGTGGGGGACTTCTAC","gc":69.4,"aa":811},"RXY":{"locus":"Rxycam_RS11755","len":2355,"seq":"ATGCTCGGACGCTACGCCGAACTCAAGGCCCAGCTTCCGCCCGGGACGATCCTCTTCTACCAGGTCGGCACCTTCTTCGAGACCTTCGAGGAAGACGCCAAGACCGTCTCCCGCGAGCTC","gc":71.6,"aa":784},"KRAD":null,"CHRO":{"locus":"CHRO_RS06880","len":2679,"seq":"ATGAAAGTTCCTTCCACTCCAACTGCTGCTGAATCTCAAGCACCCATACAACCTTGTACTGACTGTCGGCAGATAGACAAAAACAAGCTATCGCCAATGTACAAGCATTATGTAGAAGTA","gc":44.5,"aa":892},"TGAM":null,"HALO":{"locus":"VNG_RS00675","len":2616,"seq":"ATGGGGATCGTAGACGAGTTCCAGGCGTTGAAAGCCGAGACCGACGCGGACCTGCTGGCGATGCAGGTGGGTGATTTCTACGAGTTCTTCGCGGCGGACGCGCGAACGGTCGCGTCGGTG","gc":72.8,"aa":871},"PFUR":null,"EC":{"locus":"b2733","len":2562,"seq":"ATGAGTGCAATAGAAAATTTCGACGCCCATACGCCCATGATGCAGCAGTATCTCAGGCTGAAAGCCCAGCATCCCGAGATCCTGCTGTTTTACCGGATGGGTGATTTTTATGAACTGTTT","gc":56.1,"aa":853}},"idt":{"DR1|DDES":85.0,"DR1|DGOB":85.9,"DR1|DGEO":81.7,"DR1|TTH":61.5,"DR1|RXY":42.7,"DR1|CHRO":43.2,"DR1|HALO":45.1,"DR1|EC":43.7,"DDES|DGOB":82.7,"DDES|DGEO":82.3,"DDES|TTH":59.1,"DDES|RXY":42.7,"DDES|CHRO":39.5,"DDES|HALO":41.6,"DDES|EC":39.0,"DGOB|DGEO":84.5,"DGOB|TTH":57.3,"DGOB|RXY":43.1,"DGOB|CHRO":38.9,"DGOB|HALO":41.7,"DGOB|EC":40.6,"DGEO|TTH":60.3,"DGEO|RXY":42.9,"DGEO|CHRO":38.3,"DGEO|HALO":41.1,"DGEO|EC":39.5,"TTH|RXY":42.2,"TTH|CHRO":42.3,"TTH|HALO":42.2,"TTH|EC":42.3,"RXY|CHRO":43.9,"RXY|HALO":42.6,"RXY|EC":42.3,"CHRO|HALO":36.9,"CHRO|EC":41.0,"HALO|EC":38.3}},{"g":"gyrA","scope":"cons","pathway":"DNA topology","plain":"Part of DNA gyrase, the machine that manages the twist and tension of the chromosome.","why":"Keeps DNA topology in check during the heavy unwinding and resynthesis of repair.","tags":["DNA topology","supercoiling"],"role":"GyrA \u2014 DNA gyrase subunit A.","expr":null,"sp":{"DR1":{"locus":"DR_RS09795","len":2439,"seq":"ATGACCGGAATTCAACCTGTTGACATCACCAGCGAAGTCAAGACCAATTTCATCAACTACGCGATGAACGTCATCGTGGACCGCGCGCTGCCCGACGTGCGCGACGGCATGAAGCCGGTG","gc":63.9,"aa":812},"DDES":{"locus":"DEIDE_RS07230","len":2436,"seq":"ATGACTGGAATTCATCCCGTTGACATCACCAGCGAAGTCAAGACCAACTTCATCAACTACGCCATGAACGTGATCGTGGACCGCGCGCTGCCTGACGTGCGCGACGGTCTTAAACCCGTG","gc":60.9,"aa":811},"DGOB":{"locus":"DGO_RS05285","len":2436,"seq":"ATGACCGGAATTCAGCCTGTTGACATCACCAGTGAAGTCAAGACCAACTTCATCAACTACGCCATGAACGTGATCGTGGACCGCGCGCTGCCCGACGTGCGCGACGGTCTCAAGCCGGTG","gc":65.7,"aa":811},"DGEO":{"locus":"DGEO_RS07795","len":2430,"seq":"ATGACTGGAATCCATCCCGTTGACATCACCAGCGAAGTCAAGACCAACTTCATCAATTACGCGATGAACGTGATTGTGGACCGCGCGCTCCCCGACGTTCGCGACGGTCTCAAGCCGGTG","gc":63.6,"aa":809},"TTH":{"locus":"TTH_RS06855","len":2418,"seq":"ATGGCCCAGGTACTGCCTGTAGAAATCACCGAGGAGCTCAAGCAGAGCTTCATCAACTACGCCATGTCCGTCATCGTGGACCGGGCCCTGCCCGACGTGCGGGACGGGCTCAAGCCGGTC","gc":68.2,"aa":805},"RXY":{"locus":"Rxycam_RS10190","len":2559,"seq":"ATGCTTGACACCTTCTCGGGCAACATCCAGCAGCACTCCATAGAGGACGAGATACGCTCCTCCTTCCTCTCCTACGCGATGAGCGTTATCGTCTCGCGCGCCCTGCCGGACGTGCGGGAC","gc":67.1,"aa":852},"KRAD":{"locus":"KRAD_RS11160","len":2733,"seq":"GTGAGCGAGAGCACCACCGAACCCCCCCACCCCGGCGACCGCGTCGAGCAGGTGGACCTGCAGGCCGAGATGCAGCGGTCCTACCTCGACTACGCGATGAGCGTGATCGTCTCCCGGGCC","gc":70.8,"aa":910},"CHRO":{"locus":"CHRO_RS01375","len":2514,"seq":"ATGGCAAAACAATTAAACCTTCTCCCAGCGGGACAGGTGATTCCCACAGCCCTGCATACAGAAATGCAACGGTCTTATCTGGAATATGCCATGAGCGTAATTGTAGGGCGGGCATTACCA","gc":47.3,"aa":837},"TGAM":null,"HALO":{"locus":"VNG_RS03475","len":2475,"seq":"ATGAGTTCCGAATCACCAGACGTACCCGACGACGTGGCGGATCGAGTGAAGAACGTGCGCGTGGACGAGGAGATGGAGCAGTCGTACATCGACTACGCGATGAGCGTCATCGCGGGGCGC","gc":66.9,"aa":824},"PFUR":null,"EC":{"locus":"b2231","len":2628,"seq":"ATGAGCGACCTTGCGAGAGAAATTACACCGGTCAACATTGAGGAAGAGCTGAAGAGCTCCTATCTGGATTATGCGATGTCGGTCATTGTTGGCCGTGCGCTGCCAGATGTCCGAGATGGC","gc":54.0,"aa":875}},"idt":{"DR1|DDES":85.9,"DR1|DGOB":88.5,"DR1|DGEO":88.1,"DR1|TTH":57.8,"DR1|RXY":47.7,"DR1|KRAD":46.9,"DR1|CHRO":39.5,"DR1|HALO":43.5,"DR1|EC":50.0,"DDES|DGOB":88.3,"DDES|DGEO":86.9,"DDES|TTH":59.0,"DDES|RXY":49.4,"DDES|KRAD":47.7,"DDES|CHRO":40.9,"DDES|HALO":43.8,"DDES|EC":51.5,"DGOB|DGEO":87.0,"DGOB|TTH":58.3,"DGOB|RXY":49.2,"DGOB|KRAD":47.1,"DGOB|CHRO":39.6,"DGOB|HALO":44.4,"DGOB|EC":50.4,"DGEO|TTH":59.4,"DGEO|RXY":48.8,"DGEO|KRAD":47.5,"DGEO|CHRO":39.6,"DGEO|HALO":44.3,"DGEO|EC":51.2,"TTH|RXY":54.0,"TTH|KRAD":47.5,"TTH|CHRO":44.8,"TTH|HALO":47.8,"TTH|EC":51.3,"RXY|KRAD":50.0,"RXY|CHRO":42.8,"RXY|HALO":47.8,"RXY|EC":48.7,"KRAD|CHRO":42.5,"KRAD|HALO":45.8,"KRAD|EC":46.1,"CHRO|HALO":40.9,"CHRO|EC":41.0,"HALO|EC":47.3}},{"g":"polA","scope":"cons","pathway":"Gap filling / excision repair","plain":"A DNA-copying enzyme that fills in gaps and replaces removed stretches.","why":"After damaged DNA is cut out, it resynthesizes the missing piece.","tags":["excision repair","DNA synthesis"],"role":"PolA \u2014 DNA polymerase I.","expr":null,"sp":{"DR1":{"locus":"DR_RS08720","len":2766,"seq":"ATGGCCGACGCTTCCCCAGATCCCTCCAAGCCAGACACGCTGGTGCTGATTGACGGTCACGCGCTGGCGTTCCGTTCGTATTTCGCCCTGCCGCCGCTCAACAACTCCAAGGGCGAGATG","gc":66.6,"aa":921},"DDES":{"locus":"DEIDE_RS08735","len":2772,"seq":"ATGACCACGTCCCCCACCCCCGATACGCTGGTGTTGATTGACGGTCACGCGCTGGCGTTCCGTTCGTACTTTGCGCTGCCGCCCCTGACCAACAGCCGGGGCGAGGCCACGAACGCCATT","gc":65.2,"aa":923},"DGOB":{"locus":"DGO_RS07325","len":2703,"seq":"GTGCCGCCCCTGAACAACAGCCGGGGCGAGGCCACCAACGCCATCGTCGGGTTCCTGCGCCAGACCCTGCGCCTGATGCGCCAGCGCGGCAATCAGGTCATCGTGGTGTTCGACCCGCCG","gc":70.6,"aa":900},"DGEO":{"locus":"DGEO_RS11070","len":2724,"seq":"ATGACTGCCTCCTCTCCCGACACGCTGGTGCTGATTGACGGGCACGCGCTGGCGTACCGTTCGTACTTCGCGCTGCCGCCGCTGCACAACAGCCGGGGCGAGGCGACCCATGCGATTCTG","gc":68.1,"aa":907},"TTH":{"locus":"TTH_RS05365","len":2505,"seq":"ATGGAGGCGATGCTTCCGCTCTTTGAACCCAAAGGCCGGGTCCTCCTGGTGGACGGCCACCACCTGGCCTACCGCACCTTCTTCGCCCTGAAGGGCCTCACCACGAGCCGGGGCGAACCG","gc":67.9,"aa":834},"RXY":null,"KRAD":{"locus":"KRAD_RS19295","len":2802,"seq":"GTGACCCCCGCTGCCTCCACCACCGCCTCCACGACCCGGGCGCGCGCGAGCAGCGCGCGGAAGGGGGCGAAGGCGGCCCCCGCCCGTCCGCGGCTGCTCCTCATCGACGGTCACTCGATG","gc":72.8,"aa":933},"CHRO":{"locus":"CHRO_RS02435","len":3000,"seq":"ATGACTCAAGCTGCATCCGATCCTACTCCTGCTAACAGTACCGCACCACAGCGCCCCACGTTTATTTTAGTAGACGGGCATTCTTTAGCTTTCCGTTCTTATTTCGCCTTTGCCAAGGGA","gc":41.8,"aa":999},"TGAM":null,"HALO":null,"PFUR":null,"EC":{"locus":"b3863","len":2787,"seq":"ATGGTTCAGATCCCCCAAAATCCACTTATCCTTGTAGATGGTTCATCTTATCTTTATCGCGCATATCACGCGTTTCCCCCGCTGACTAACAGCGCAGGCGAGCCGACCGGTGCGATGTAT","gc":52.0,"aa":928}},"idt":{"DR1|DDES":74.2,"DR1|DGOB":75.4,"DR1|DGEO":73.4,"DR1|TTH":52.6,"DR1|KRAD":36.5,"DR1|CHRO":39.1,"DR1|EC":39.7,"DDES|DGOB":78.7,"DDES|DGEO":76.2,"DDES|TTH":51.9,"DDES|KRAD":36.8,"DDES|CHRO":39.0,"DDES|EC":39.7,"DGOB|DGEO":72.1,"DGOB|TTH":51.3,"DGOB|KRAD":36.6,"DGOB|CHRO":38.8,"DGOB|EC":40.7,"DGEO|TTH":53.5,"DGEO|KRAD":37.6,"DGEO|CHRO":40.0,"DGEO|EC":40.6,"TTH|KRAD":42.3,"TTH|CHRO":43.5,"TTH|EC":41.0,"KRAD|CHRO":36.8,"KRAD|EC":38.1,"CHRO|EC":41.2}},{"g":"lexA","scope":"cons","pathway":"SOS regulation","plain":"A switch that keeps emergency repair genes off until they're needed.","why":"Represses the bacterial SOS response; when damage hits it's cleaved and those genes switch on. (D. radiodurans leans more on the IrrE/DdrO switch.)","tags":["regulation","SOS response"],"role":"LexA \u2014 SOS-response repressor.","expr":null,"sp":{"DR1":{"locus":"DR_RS15325","len":633,"seq":"ATGCCGCCTGAACTGACGCCCACCCGCCGCTCCATCCTGCAAGCCACCCTGCGTCTGGGCGCGGGGGCCACGGCGGGGCAGGTGGCGCAGGAAGTGGGCATCACCAAGCAGGCAATCAGC","gc":70.9,"aa":210},"DDES":null,"DGOB":null,"DGEO":null,"TTH":null,"RXY":{"locus":"Rxycam_RS03325","len":630,"seq":"ATGCGAGAGAACCTGGAGAAGAGGTTGGAGATCCTGGGCTACCTGGCCCGCAGGGCCGCCAGGGGCGAGGGGGCGCCGAGCGTGAAGGAGGTGGGGGAGGCCGTGGGCTTGAGGAGCACA","gc":67.1,"aa":209},"KRAD":{"locus":"KRAD_RS03520","len":678,"seq":"ATCCACCACTTCCCCGACGGCCCCCACGGCCGCGACGGCCTGACCGCCCGGCAGCGGCGGGTCCTGGCCGCCATCCAGGAGTGCGTCGAGCAGCGGGGCTACCCGCCGAGCATGCGCGAG","gc":74.2,"aa":225},"CHRO":{"locus":"CHRO_RS19320","len":612,"seq":"ATGGAACCCCTAACGGTAGCTCAACAAGAACTATATGACTGGTTAGCAGAATACGTGCGGCAATACCAGCATTCACCTTCAATTCGCCAGATGATGCAAGCGATGAATTTGAAATCGCCT","gc":47.9,"aa":203},"TGAM":null,"HALO":null,"PFUR":null,"EC":{"locus":"b4043","len":609,"seq":"ATGAAAGCGTTAACGGCCAGGCAACAAGAGGTGTTTGATCTCATCCGTGATCACATCAGCCAGACAGGTATGCCGCCGACGCGTGCGGAAATCGCGCAGCGTTTGGGGTTCCGTTCCCCA","gc":51.9,"aa":202}},"idt":{"DR1|RXY":33.0,"DR1|KRAD":33.8,"DR1|CHRO":29.6,"DR1|EC":33.2,"RXY|KRAD":36.8,"RXY|CHRO":30.5,"RXY|EC":37.6,"KRAD|CHRO":34.0,"KRAD|EC":39.6,"CHRO|EC":35.6}},{"g":"tkt","scope":"cons","pathway":"Metabolic recovery","plain":"A metabolic enzyme in the pentose-phosphate pathway.","why":"Regenerates NADPH \u2014 the cell's antioxidant and building-block fuel \u2014 powering the energy-intensive recovery after irradiation.","tags":["metabolism","metabolic recovery"],"role":"Transketolase \u2014 PPP, NADPH regeneration.","expr":null,"sp":{"DR1":{"locus":"DR_RS11605","len":2001,"seq":"ATGACAGACCAGAGCGTTTCCCAAAACGTGGCGCGGCTGAGTGTGAACACCATTCGCACGCTCGCCATTGACGCGGTGCAGGCCGCCAACTCGGGCCACCCCGGTGCGCCGCTGGGCATG","gc":67.1,"aa":666},"DDES":{"locus":"DEIDE_RS00320","len":1968,"seq":"ATGTCAACTGAGCAGCTGAGCATCAACACCATCCGCACGCTGTCTATCGATGCCGTACAGGCCGCCAACAGTGGCCACCCTGGCGCGCCGCTGGGCATGGCCCCGATGGCCTACGTGGTG","gc":66.3,"aa":655},"DGOB":{"locus":"DGO_RS14965","len":1977,"seq":"ATGACCGAGCACAAGGACGTGGCGCAACTCAGTGTCAACACGATTCGCACCCTGAGCATCGACGGAGTGCAGGCCGCCAACAGCGGCCACCCCGGCGCGCCGCTGGGTATGGCCCCGATG","gc":69.8,"aa":658},"DGEO":{"locus":"DGEO_RS14250","len":2004,"seq":"ATGAGTCCCGAACAGCAGGCCGTGCGTCAGGATGTCGATCAGCTGAGCATCAACACCATCAGGACGCTTGCCATCGATGCGGTGCAGCGGGCCAACAGTGGCCACCCCGGCGCGCCGCTC","gc":66.1,"aa":667},"TTH":{"locus":"TTH_RS00565","len":1956,"seq":"ATGAAGGAGACGCGGGACCTAGAGACCCTTTCGGTGAACGCCATCCGCTTCCTGGCCATTGACGCGGTGGAGAAGGCGCGAAGCGGCCACCCCGGGATGCCCATGGGCATGGCGCCCCTG","gc":70.2,"aa":651},"RXY":null,"KRAD":{"locus":"KRAD_RS19440","len":2094,"seq":"GTGAGCCAGCCCAGCCTCGAGTGGAGCGACTTGGACCAGAGGACGGTCGACACCGCCCGCGTCCTCGCGATGGACGCGGTGCAGCGCGCCGGCAACGGTCACCCGGGTACGGCCATGAGC","gc":71.8,"aa":697},"CHRO":{"locus":"CHRO_RS08570","len":2031,"seq":"ATGGCTGTTGCAACCCAATCCCTTGAAGAACTTTGTATTAACTCAATCCGCTTTCTGGCAATTGATGCCGTAGAAAAGGCAAAGTCGGGTCATCCTGGGCTGCCGATGGGTGCTGCTCCG","gc":50.0,"aa":676},"TGAM":null,"HALO":null,"PFUR":null,"EC":{"locus":"b2935","len":1992,"seq":"ATGTCCTCACGTAAAGAGCTTGCCAATGCTATTCGTGCGCTGAGCATGGACGCAGTACAGAAAGCCAAATCCGGTCACCCGGGTGCCCCTATGGGTATGGCTGACATTGCCGAAGTCCTG","gc":55.7,"aa":663}},"idt":{"DR1|DDES":82.6,"DR1|DGOB":79.0,"DR1|DGEO":81.5,"DR1|TTH":52.2,"DR1|KRAD":47.0,"DR1|CHRO":52.3,"DR1|EC":48.4,"DDES|DGOB":81.4,"DDES|DGEO":85.2,"DDES|TTH":52.1,"DDES|KRAD":49.5,"DDES|CHRO":55.3,"DDES|EC":50.1,"DGOB|DGEO":82.2,"DGOB|TTH":51.5,"DGOB|KRAD":48.8,"DGOB|CHRO":53.2,"DGOB|EC":52.0,"DGEO|TTH":54.2,"DGEO|KRAD":49.0,"DGEO|CHRO":54.6,"DGEO|EC":51.0,"TTH|KRAD":50.1,"TTH|CHRO":55.0,"TTH|EC":51.0,"KRAD|CHRO":48.1,"KRAD|EC":46.2,"CHRO|EC":52.5}}];
+
+const THREE_OK = typeof THREE !== 'undefined';
+const SPECIES={"DR1": {"n": "D. radiodurans", "s": "R1", "kind": "radiotolerant", "lin": "Deinococcus–Thermus", "dom": "Bacteria", "distant": false}, "DDES": {"n": "D. deserti", "s": "VCD115", "kind": "radiotolerant", "lin": "Deinococcus–Thermus", "dom": "Bacteria", "distant": false}, "DGOB": {"n": "D. gobiensis", "s": "I-0", "kind": "radiotolerant", "lin": "Deinococcus–Thermus", "dom": "Bacteria", "distant": false}, "DGEO": {"n": "D. geothermalis", "s": "DSM 11300", "kind": "radiotolerant", "lin": "Deinococcus–Thermus", "dom": "Bacteria", "distant": false}, "TTH": {"n": "T. thermophilus", "s": "HB8", "kind": "sensitive control", "lin": "Deinococcus–Thermus", "dom": "Bacteria", "distant": false}, "RXY": {"n": "R. xylanophilus", "s": "DSM 9941", "kind": "radiotolerant", "lin": "Actinobacteria", "dom": "Bacteria", "distant": false}, "KRAD": {"n": "K. radiotolerans", "s": "SRS30216", "kind": "radiotolerant", "lin": "Actinobacteria", "dom": "Bacteria", "distant": false}, "CHRO": {"n": "Chroococcidiopsis", "s": "PCC 7203", "kind": "radiotolerant", "lin": "Cyanobacteria", "dom": "Bacteria", "distant": false}, "TGAM": {"n": "T. gammatolerans", "s": "EJ3", "kind": "radiotolerant", "lin": "Euryarchaeota", "dom": "Archaea", "distant": true}, "HALO": {"n": "H. salinarum", "s": "NRC-1", "kind": "radiotolerant", "lin": "Euryarchaeota", "dom": "Archaea", "distant": true}, "PFUR": {"n": "P. furiosus", "s": "DSM 3638", "kind": "radiotolerant", "lin": "Euryarchaeota", "dom": "Archaea", "distant": true}, "EC": {"n": "E. coli", "s": "K-12", "kind": "sensitive control", "lin": "Proteobacteria", "dom": "Bacteria", "distant": false}};
+const SP_ORDER=["DR1", "DDES", "DGOB", "DGEO", "TTH", "RXY", "KRAD", "CHRO", "TGAM", "HALO", "PFUR", "EC"];
+const ASM={"DR1": "GCF_000008565.1", "DDES": "GCF_000020685.1", "DGOB": "GCF_000252445.1", "DGEO": "GCF_000196275.1", "TTH": "GCF_000091545.1", "RXY": "GCF_019448335.1", "KRAD": "GCF_000017305.1", "CHRO": "GCF_000317125.1", "TGAM": "GCF_000022365.1", "HALO": "GCF_000006805.1", "PFUR": "GCF_008245085.1", "EC": "GCF_000005845.2"};
+const BASECOL={A:0x1f7a90,T:0x3f5e86,G:0x6e5f93,C:0xaab6c0};
+const IDLE=0x5a616a, RUNG=0x434a52; const SHOWN=46;
+
+let renderer,scene,camera,helixA,helixB,clock;
+let spinA={speed:0.0026}, spinB={speed:0.0026};
+let dimA=0.15, dimAtarget=0.15, dimB=1, dimBtarget=1;
+
+function glowSprite(){
+  const c=document.createElement('canvas'); c.width=c.height=128; const g=c.getContext('2d');
+  const grd=g.createRadialGradient(64,64,0,64,64,64);
+  grd.addColorStop(0,'rgba(255,255,255,.9)');grd.addColorStop(.35,'rgba(225,235,242,.45)');grd.addColorStop(1,'rgba(255,255,255,0)');
+  g.fillStyle=grd; g.fillRect(0,0,128,128);
+  const m=new THREE.SpriteMaterial({map:new THREE.CanvasTexture(c),blending:THREE.AdditiveBlending,depthWrite:false,opacity:.85});
+  const s=new THREE.Sprite(m); s.scale.set(13,13,1); return s;
+}
+function makeHelix(){
+  const g=new THREE.Group(); const R=3.1,rise=0.46,turn=0.36;
+  const sph=new THREE.SphereGeometry(0.26,14,14), cyl=new THREE.CylinderGeometry(0.06,0.06,1,6);
+  g.userData.bases=[]; const up=new THREE.Vector3(0,1,0);
+  for(let i=0;i<SHOWN;i++){
+    const a=i*turn,y=i*rise-SHOWN*rise/2, xA=R*Math.cos(a),zA=R*Math.sin(a),xB=R*Math.cos(a+Math.PI),zB=R*Math.sin(a+Math.PI);
+    const mA=new THREE.MeshStandardMaterial({color:IDLE,roughness:.4,metalness:.1}),mB=new THREE.MeshStandardMaterial({color:IDLE,roughness:.4,metalness:.1});
+    const mR=new THREE.MeshStandardMaterial({color:RUNG,roughness:.7,transparent:true,opacity:.7});
+    const sA=new THREE.Mesh(sph,mA);sA.position.set(xA,y,zA);g.add(sA);
+    const sB=new THREE.Mesh(sph,mB);sB.position.set(xB,y,zB);g.add(sB);
+    const dir=new THREE.Vector3(xB-xA,0,zB-zA),len=dir.length();
+    const r=new THREE.Mesh(cyl,mR);r.position.set((xA+xB)/2,y,(zA+zB)/2);r.scale.set(1,len,1);
+    r.quaternion.setFromUnitVectors(up,dir.clone().normalize());g.add(r);
+    g.userData.bases.push({mA,mB,mR});
+  }
+  const gl=glowSprite();gl.position.set(0,SHOWN*rise/2+1.4,0);g.add(gl);
+  return g;
+}
+function colorHelix(g,seq){
+  const bs=g.userData.bases;
+  for(let i=0;i<bs.length;i++){
+    const ch=seq&&seq[i]?seq[i].toUpperCase():null, col=ch&&BASECOL[ch]!==undefined?BASECOL[ch]:IDLE;
+    bs[i].mA.color.setHex(col);bs[i].mB.color.setHex(col);
+    bs[i].mA.emissive.setHex(ch?col:0);bs[i].mB.emissive.setHex(ch?col:0);
+    bs[i].mA.emissiveIntensity=ch?0.4:0;bs[i].mB.emissiveIntensity=ch?0.4:0;
+    bs[i].mR.opacity=ch?0.9:0.55;
+  }
+}
+function spin(w){ (w==='B'?spinB:spinA).speed=0.55; }
+function initThree(){
+  if(!THREE_OK){document.getElementById('loadmsg').textContent='WebGL failed to load — open with an internet connection.';return;}
+  scene=new THREE.Scene();scene.fog=new THREE.FogExp2(0x8b9199,0.03);
+  camera=new THREE.PerspectiveCamera(42,innerWidth/innerHeight,0.1,200);camera.position.set(0,0,22);
+  renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setSize(innerWidth,innerHeight);
+  document.getElementById('scene').appendChild(renderer.domElement);
+  scene.add(new THREE.AmbientLight(0xc8d0d8,0.85));
+  const k=new THREE.DirectionalLight(0xffffff,0.85);k.position.set(5,9,11);scene.add(k);
+  const tp=new THREE.PointLight(0xeaf2f8,1.1,60);tp.position.set(0,9,5);scene.add(tp);
+  helixA=makeHelix();scene.add(helixA); helixB=makeHelix();helixB.visible=false;scene.add(helixB);
+  clock=new THREE.Clock();document.getElementById('loadmsg').style.display='none';animate();
+  addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);});
+}
+function animate(){
+  requestAnimationFrame(animate);const t=clock?clock.getElapsedTime():0;
+  spinA.speed+=(0.0026-spinA.speed)*0.04; spinB.speed+=(0.0026-spinB.speed)*0.04;
+  dimA+=(dimAtarget-dimA)*0.07; dimB+=(dimBtarget-dimB)*0.07;
+  if(helixA){helixA.rotation.y+=spinA.speed;helixA.position.y=Math.sin(t*0.5)*0.25;helixA.scale.setScalar(dimA);}
+  if(helixB){helixB.rotation.y+=spinB.speed;helixB.position.y=Math.sin(t*0.5+1)*0.25;helixB.scale.setScalar(dimB);}
+  if(renderer)renderer.render(scene,camera);
+}
+function layoutScene(){
+  if(!THREE_OK)return;
+  if(mode==='cross'){helixB.visible=true;helixA.position.x=-4.6;helixB.position.x=4.6;camera.position.set(0,0,27);}
+  else{helixB.visible=false;helixA.position.x=0;camera.position.set(0,0,22);}
+}
+
+/* ---------- state ---------- */
+let mode='lookup', selectedGene=null, activeSp='DR1', compareSel=['DR1','EC'], introOpen=true;
+
+const EXPLAIN={
+  lookup:{ey:'Tool 01',h:'Gene lookup',
+    body:["Look up any radiation-response gene and get a plain-language profile: what the gene is, what it does, why it matters for surviving radiation, how strongly D. radiodurans switches it on, and whether other bacteria share it.",
+      "Switch species at the top of the panel to read the same gene in a different lineage. The helix shows that organism's real coding sequence."],
+    src:"Data: real RefSeq genomes across bacteria & archaea · RNA-seq induction from GEO GSE176207 · NCBI/PubMed links."},
+  cross:{ey:'Tool 02',h:'Cross-species',
+    body:["Compare a gene between two lineages side by side, with their real sequences. Pick any two organisms; the atlas shows which repair genes they share and which are unique to one.",
+      "Useful for translating a finding from the well-studied E. coli to the radiation-resistant Deinococcus — and for spotting the genes present only in the survivors, which are leading candidates for what makes them resistant."],
+    src:"Presence shown by annotated gene symbol per RefSeq assembly · definitive orthology comes from the pipeline's orthogroups."},
+  func:{ey:'Tool 03',h:'Function search',
+    body:["Search by what a gene does — 'double-strand break repair', 'helicase' — instead of by name. It surfaces every gene tied to that process and shows, at a glance, which organisms carry it.",
+      "Useful when you're reasoning about a repair mechanism as a whole rather than chasing one gene name."],
+    src:"Presence across every atlas genome (bacteria & archaea) · by annotated symbol."},
+  expr:{ey:'Tool 04',h:'Expression',
+    body:["See which repair genes D. radiodurans actually turns up after a radiation dose, ranked from real RNA-seq, with the experimental conditions and honest significance shown.",
+      "This is the experimental evidence layer beneath the rest of the atlas — the measured response, not just annotation."],
+    src:"DESeq2 on GEO GSE176207 — D. radiodurans, ionizing radiation ~10 kGy, 3 vs 3 replicates."}
+};
+
+function showIntro(){
+  const e=EXPLAIN[mode]; introOpen=true;
+  document.getElementById('intro').innerHTML=`<div class="intro-card">
+    <div class="ey">${e.ey}</div><h1>${e.h}</h1>
+    ${e.body.map(p=>`<p>${p}</p>`).join('')}
+    <div class="src">${e.src}</div>
+    <button class="intro-enter" id="introEnter">Enter ↵</button></div>`;
+  document.getElementById('intro').classList.remove('gone');
+  document.getElementById('caption').classList.add('hidden');
+  dimAtarget=0.12; dimBtarget=0.12;
+  document.getElementById('introEnter').addEventListener('click',e2=>{e2.stopPropagation();enterMode();});
+}
+function enterMode(){
+  introOpen=false;
+  document.getElementById('intro').classList.add('gone');
+  document.getElementById('caption').classList.remove('hidden');
+  setCaption();
+  // helix rotates into frame
+  dimAtarget=(mode==='func'||mode==='expr')?0.6:1; dimBtarget=(mode==='cross')?1:0.0;
+  if(mode==='cross') dimAtarget=1;
+  spin('A'); if(mode==='cross') spin('B');
+  updateLabels();
+  // panels
+  if(mode==='expr'){openP('left',false);openP('right',false);setTimeout(animateExpr,140);}
+  else if(mode==='cross'){renderCrossControl();openP('left',true);openP('right',false);}
+  else{openP('left',true);openP('right',false);}
+}
+
+function setCaption(){const e=EXPLAIN[mode];document.getElementById('caption').innerHTML=
+  `<div class="ey">${e.ey} · ${SP_ORDER.length} genomes</div><h1>${e.h}</h1><p>${e.body[0]}</p><div class="more">↻ click to re-open the full overview</div>`;}
+
+function updateLabels(){
+  const la=document.getElementById('labelA'), lb=document.getElementById('labelB');
+  if(mode==='cross'){
+    const a=SPECIES[compareSel[0]], b=SPECIES[compareSel[1]];
+    la.innerHTML=`<div class="nm"><i>${a.n}</i></div><div class="sub">${a.s} · ${a.kind}</div>`; la.style.left='33%'; la.classList.add('on');
+    lb.innerHTML=`<div class="nm"><i>${b.n}</i></div><div class="sub">${b.s} · ${b.kind}</div>`; lb.style.left='67%'; lb.classList.add('on');
+  } else if(mode==='lookup'){
+    const a=SPECIES[activeSp];
+    la.innerHTML=`<div class="nm"><i>${a.n}</i></div><div class="sub">${a.s} · helix shows real coding sequence</div>`; la.style.left='50%'; la.classList.add('on');
+    lb.classList.remove('on');
+  } else { la.classList.remove('on'); lb.classList.remove('on'); }
+}
+
+function seqHTML(seq,org){let o=`<span class="org">${org}</span>`;for(let i=0;i<seq.length;i++){const c=seq[i].toUpperCase();o+=`<span class="b-${c}">${c}</span>`;}return o;}
+const pubmed=g=>'https://pubmed.ncbi.nlm.nih.gov/?term='+encodeURIComponent(g+' Deinococcus radiodurans');
+const ncbi=g=>'https://www.ncbi.nlm.nih.gov/gene/?term='+encodeURIComponent(g+' Deinococcus radiodurans');
+const presentIn=g=>SP_ORDER.filter(s=>g.sp[s]);
+const SPI={DR1:0,DDES:1,DGOB:2,EC:3};
+function idtFor(g,a,b){ if(!g.sp[a]||!g.sp[b])return null; const k=SPI[a]<SPI[b]?a+'|'+b:b+'|'+a; const v=g.idt&&g.idt[k]; return (v===undefined||v===null)?null:v; }
+function toolkit(sp){ return GENES.filter(g=>g.sp[sp]).map(g=>g.g); }
+function uniqueTo(a,b){ return GENES.filter(g=>g.sp[a]&&!g.sp[b]).map(g=>g.g); }
+function idtInterp(p){ if(p==null)return''; if(p>=80)return'nearly the same protein — highly conserved'; if(p>=50)return'conserved core but substantially diverged — each version may be tuned differently (sequence only; real functional differences need experiments)'; return'distantly related — same family, very different sequence'; }
+const PHENO={"DR1": {"short": "~5–12 kGy", "full": "Survives 5,000 Gy with almost no loss of viability; ~10% survive 12,000 Gy. Roughly 50× more radiation-resistant than E. coli, ~1,000× more than humans."}, "DDES": {"short": "up to ~15 kGy", "full": "Isolated from the Sahara after a 15 kGy gamma blast; tolerates acute doses around 15,000 Gy, with strong UV and desiccation resistance."}, "DGOB": {"short": ">15 kGy", "full": "Resistant to >15,000 Gy gamma and >600 J/m² UV — among the most radiation-tolerant organisms known. Nearly half its genome is unknown-function."}, "DGEO": {"short": "multi-kGy", "full": "A thermophilic, radiation- and desiccation-resistant Deinococcus from hot springs; survives several kGy of ionizing radiation, in the Deinococcus high-tolerance range."}, "TTH": {"short": "lethal by a few hundred Gy", "full": "A Deinococcus–Thermus relative that is radiation-SENSITIVE — killed by a few hundred Gy, like E. coli. An in-phylum negative control: close relatives need not be resistant."}, "RXY": {"short": ">25 kGy", "full": "A thermophilic actinobacterium among the most radioresistant organisms known (survives >25,000 Gy); pairs trehalose with manganese for antioxidant protection."}, "KRAD": {"short": "~10–12 kGy (D10)", "full": "An actinobacterium with γ-radiation D10 ≈ 10–12 kGy, approaching D. radiodurans — radioresistance in a separate phylum."}, "CHRO": {"short": "~15 kGy", "full": "A desiccation-tolerant cyanobacterium that survives ~15,000 Gy ionizing radiation and high UV — photosynthetic radioresistance."}, "TGAM": {"short": "up to ~30 kGy", "full": "A hyperthermophilic archaeon often called the most radiation-resistant organism known: 5,000 Gy with no loss of viability, D10 ≈ 7.5 kGy, surviving up to 30,000 Gy. NOTE: archaea name most repair genes differently, so its by-symbol toolkit count here is a severe undercount."}, "HALO": {"short": "~5 kGy (D10)", "full": "A haloarchaeon with D10 ≈ 5 kGy and a high manganese/iron ratio like D. radiodurans; resists desiccation, UV and IR. NOTE: archaeal repair genes are differently named — the by-symbol count undercounts it."}, "PFUR": {"short": "multi-kGy", "full": "A hyperthermophilic archaeon with radioresistant behaviour (survives multi-kGy IR), below T. gammatolerans. NOTE: archaeal repair genes are differently named — the by-symbol count undercounts it."}, "EC": {"short": "lethal by a few hundred Gy", "full": "Radiation-sensitive reference: ~10% survive only 150 Gy, and 200–800 Gy is lethal. (For scale, 5–10 Gy kills a human.)"}};
+const EXPL={
+ phenotype:"The real, lab-measured behavior — how much radiation each organism actually survives. It's the observable fact the genetics is trying to explain, and where 'more repair genes' gets tested against reality.",
+ identity:"Amino-acid identity is the percentage of a protein's building blocks that match when the two versions are lined up. 90% identical means nearly the same machine; 55% means they share an ancestor and a core job but have drifted apart. Why it matters: conserved sequence is the strongest hint of conserved function — if a gene barely changes across billions of years, it's because changing it breaks something vital, so high identity lets us infer 'these do the same job' without an experiment. The limit: similar sequence strongly suggests similar function, but small differences can still tune speed, stability, or partners — which is why a 50–80% match may still behave differently.",
+ gc:"GC content is the share of DNA letters that are G or C rather than A or T. G–C pairs bond more tightly, so GC-rich DNA is sturdier. Deinococcus genomes run GC-rich (~66%) versus E. coli's ~54% — a real fingerprint and a common trait of extreme-environment microbes, though a correlation, not a proven cause of resistance.",
+ toolkit:"How many of the atlas's known DNA-repair genes are annotated in that genome — more genes, more repair routes on hand. Bigger toolkits track with the radiation survivors, and you can check that against their measured survival below. But having the genes isn't the whole story (see the reasoning panel).",
+ pathway:"A repair pathway is a team of proteins that fix one type of DNA damage together — like a pit crew where each member has a role. This gene is one member of the team named here.",
+ expression:"How strongly a gene is switched ON — how many RNA copies the cell makes. A gene can be present but idle, or present and cranked up. RNA-seq counts RNA before and after radiation; 'fold-change' is how many times more after damage, and 'padj' is the statistical confidence it's real (lower is stronger; under 0.05 is the usual bar). Two organisms with the same gene can use it very differently — regulation often counts as much as presence.",
+ scope:"'Conserved' = the gene appears across distantly related bacteria, an ancient tool from a shared ancestor. 'Deinococcus-lineage' = mostly unique to Deinococcus and relatives, a newer invention and a prime suspect for what makes these organisms special.",
+ tells:"How comparing genomes actually works: (1) a shared gene = a shared capability — both can do that repair. (2) Sequence identity says how conserved it is, and whether a version may have drifted. (3) The most powerful move is the difference — a gene in the survivor but absent in the sensitive organism is a prime candidate for explaining survival. (4) The honest limit: studies find no evidence D. radiodurans simply makes more RecA than E. coli. Its edge is a combination — extra Deinococcus-specific genes, several genome copies, a master switch (IrrE), and especially manganese-antioxidant complexes that shield its proteins from radiation. So 'has the gene,' or even 'uses it more,' is never the whole answer — which is why this panel shows what it can and flags what it can't."
+};
+function xsec(title,key){ return `<div class="d-sec expandable">${title}<span class="chev">＋</span></div><div class="d-explain"><div class="inner">${EXPL[key]}</div></div>`; }
+
+/* ---------- LEFT panel (gene / func search) ---------- */
+function renderLeft(){
+  const z=document.getElementById('leftBody');
+  const ph=mode==='func'?'Search a function — helicase, regulation…':'Search a gene — recA, ddrA, pprA…';
+  let pills;
+  if(mode==='func') pills=['double-strand break repair','nucleotide excision repair','helicase','homologous recombination','regulation','mismatch repair','metabolism'].map(f=>`<span class="pill" data-q="${f}">${f}</span>`).join('');
+  else pills=GENES.slice(0,8).map(g=>`<span class="pill" data-q="${g.g}">${g.g}</span>`).join('');
+  const legend = mode==='func'
+    ? `<div class="legend">Dots show presence in <b style="background:none;color:var(--ink-mid)">DR1 · DDES · DGOB · EC</b> by annotated symbol. A dim dot = no symbol match in that genome (may be unannotated, not necessarily absent).</div>`
+    : `<div class="legend"><b class="cons">conserved</b> the gene also exists in distant bacteria (e.g. E. coli) — an ancient, shared repair job.<br><b class="deino">Deinococcus</b> found mainly in the Deinococcus lineage — a candidate for what makes it radiation-resistant.</div>`;
+  z.innerHTML=`<div class="searchbar"><input id="q" type="text" placeholder="${ph}" autocomplete="off"></div>
+    <div class="pills">${pills}</div>${legend}<div class="rcount" id="rcount"></div><div class="reslist" id="reslist"></div>`;
+  const q=document.getElementById('q'); q.addEventListener('input',()=>filter(q.value));
+  z.querySelectorAll('.pill').forEach(p=>p.addEventListener('click',()=>{q.value=p.dataset.q;filter(p.dataset.q);}));
+  filter('');
+}
+function filter(query){
+  query=(query||'').trim().toLowerCase(); let matches;
+  if(!query) matches=GENES.slice();
+  else if(mode==='func') matches=GENES.filter(g=>g.tags.some(t=>t.toLowerCase().includes(query))||g.role.toLowerCase().includes(query)||g.pathway.toLowerCase().includes(query));
+  else matches=GENES.filter(g=>g.g.toLowerCase().includes(query)||g.tags.some(t=>t.toLowerCase().includes(query)));
+  const rc=document.getElementById('rcount'),rl=document.getElementById('reslist');
+  if(rc)rc.innerHTML=`<b>${matches.length}</b> gene${matches.length!==1?'s':''}`;
+  if(rl){
+    rl.innerHTML=matches.map(g=>{
+      const dots=SP_ORDER.map(s=>`<span class="pdot ${g.sp[s]?'on':''}" title="${SPECIES[s].n}"></span>`).join('');
+      const right = mode==='func' ? `<span class="pdots">${dots}</span>` : `<span class="s ${g.scope}">${g.scope==='deino'?'Deinococcus':'conserved'}</span>`;
+      return `<div class="ritem ${selectedGene===g.g?'sel':''}" data-g="${g.g}"><span class="g">${g.g}</span><span class="right">${right}</span></div>`;
+    }).join('')||`<div class="rcount">no match in dataset — reported, not guessed</div>`;
+    rl.querySelectorAll('.ritem').forEach(it=>it.addEventListener('click',()=>selectGene(it.dataset.g)));
+  }
+  if(mode==='func') paintConstellation(matches.map(m=>m.g));
+}
+
+/* ---------- gene select (lookup / func) ---------- */
+function selectGene(name){
+  const g=GENES.find(x=>x.g===name); if(!g)return; selectedGene=name;
+  document.querySelectorAll('.ritem').forEach(it=>it.classList.toggle('sel',it.dataset.g===name));
+  if(mode==='func' && !g.sp[activeSp]) activeSp='DR1';
+  openP('right',true); renderDetail(g); updateHelixForGene(g);
+  if(mode==='func') paintConstellation(null,name);
+}
+function updateHelixForGene(g){
+  if(!THREE_OK)return; const rec=g.sp[activeSp];
+  spin('A'); colorHelix(helixA,null);
+  setTimeout(()=>colorHelix(helixA, rec?rec.seq:null),700);
+}
+function setActiveSpecies(sp){
+  activeSp=sp; const g=GENES.find(x=>x.g===selectedGene); if(g){renderDetail(g);updateHelixForGene(g);} updateLabels();
+}
+
+function renderDetail(g){
+  document.getElementById('rightTitle').textContent='Gene detail';
+  const z=document.getElementById('rightBody');
+  const rec=g.sp[activeSp]; const present=!!rec;
+  const scopeLab=g.scope==='deino'?'Deinococcus-lineage':'broadly conserved';
+  // species switcher
+  const sw=`<div class="spswitch">${SP_ORDER.map(s=>`<button class="spbtn ${s===activeSp?'on':''}" data-sp="${s}">${SPECIES[s].n.replace('. ','.')}<span class="k">${g.sp[s]?SPECIES[s].s:'no symbol'}</span></button>`).join('')}</div>`;
+  // expression (DR1 only)
+  let expr;
+  if(activeSp==='DR1' && g.expr){expr=`<div class="expr-val">+${g.expr.fc.toFixed(2)}-fold</div>
+    <div class="expr-meta">D. radiodurans turns this gene up after ionizing radiation (~10 kGy).<br>log₂ fold-change · IR vs untreated control · DESeq2 · padj ${g.expr.padj}${g.expr.base?' · mean depth ~'+g.expr.base:''}${g.expr.note?'<br>'+g.expr.note:''}</div>
+    <div class="expr-sig">● induced in the right direction — padj &gt; 0.05 on this depth-limited series</div>`;}
+  else if(activeSp==='DR1') expr=`<div class="d-text dim">Not in the verified DESeq2 sample yet — genome-wide induction loads from the full D. radiodurans expression export.</div>`;
+  else expr=`<div class="d-text dim">No radiation RNA-seq for <i>${SPECIES[activeSp].n}</i> in this atlas yet. Induction values would come from that organism's own RNA-seq.</div>`;
+  // sequence / presence
+  let seqSec;
+  if(present) seqSec=`<div class="seqblock">${seqHTML(rec.seq.slice(0,SHOWN),SPECIES[activeSp].n+' '+SPECIES[activeSp].s+' · '+rec.locus)}</div>
+    <div class="seqnote">${rec.len} bp · ${rec.aa} aa · GC ${rec.gc}% · source ${ASM[activeSp]} (RefSeq) · showing first ${SHOWN} bp</div>`;
+  else seqSec=`<div class="absent">No annotated <b>${g.g}</b> by symbol in <i>${SPECIES[activeSp].n}</i> (${ASM[activeSp]}). It may be unannotated or named differently — the pipeline's orthogroups give the definitive call, not symbol matching.</div>`;
+  // conservation summary
+  const inN=presentIn(g).length;
+  const idtDR=(activeSp!=='DR1'&&present&&g.sp.DR1)?idtFor(g,activeSp,'DR1'):null;
+  const idtLine=idtDR!=null?` This <i>${SPECIES[activeSp].n}</i> copy is <b>${idtDR}%</b> identical to the D. radiodurans protein — ${idtInterp(idtDR)}.`:'';
+  const cons=`<div class="d-text">Found in <b>${inN} of ${SP_ORDER.length}</b> atlas genomes by symbol: ${presentIn(g).map(s=>SPECIES[s].n).join(', ')||'—'}. ${g.scope==='deino'?'Largely Deinococcus-lineage — a candidate resistance gene.':'A widely shared repair gene.'}${idtLine}</div>`;
+
+  const pheno=PHENO[activeSp];
+  z.innerHTML=`<div>${sw}</div>
+    <div style="margin-top:12px"><span class="d-gene scramble" id="dGene">${g.g}</span><span class="d-scope ${g.scope}">${scopeLab}</span></div>
+    <div class="d-role">${g.role}</div>
+    <div class="d-sec">What it is</div><div class="d-text">${g.plain}</div>
+    <div class="d-sec">Why it matters for radiation survival</div><div class="d-text">${g.why}</div>
+    ${xsec('Repair pathway','pathway')}<div class="d-path" style="margin-top:2px">${g.pathway}</div>
+    <div class="d-sec">Viewing in</div><div class="d-text dim"><i>${SPECIES[activeSp].n}</i> ${SPECIES[activeSp].s} · ${SPECIES[activeSp].lin} (${SPECIES[activeSp].dom}) · ${SPECIES[activeSp].kind}${present?' · '+rec.locus:''}</div>
+    ${xsec('Real-world survival of this organism','phenotype')}<div class="d-text" style="margin-top:2px"><b style="color:var(--accent)">${pheno.short}</b> — ${pheno.full}</div>
+    ${xsec('Expression','expression')}${expr}
+    ${xsec('Conservation','scope')}${cons}
+    ${xsec('Coding sequence · 5′ window','gc')}${seqSec}
+    <div class="d-row" style="margin-top:16px"><a class="d-link" href="${ncbi(g.g)}" target="_blank" rel="noopener">NCBI Gene ↗</a><a class="d-link" href="${pubmed(g.g)}" target="_blank" rel="noopener">PubMed ↗</a></div>
+    <div class="d-tags" style="margin-top:14px">${g.tags.map(t=>`<span class="d-tag">${t}</span>`).join('')}</div>`;
+  z.querySelectorAll('.spbtn').forEach(b=>b.addEventListener('click',()=>setActiveSpecies(b.dataset.sp)));
+  scrambleEl(document.getElementById('dGene'),g.g,520);
+}
+
+/* ---------- CROSS-SPECIES ---------- */
+function renderCrossControl(){
+  document.getElementById('leftTitle').textContent='Compare';
+  const z=document.getElementById('leftBody');
+  const spPills=SP_ORDER.map(s=>{const on=compareSel.includes(s);return `<button class="spbtn ${on?'on2':''}" data-csp="${s}">${SPECIES[s].n.replace('. ','.')}</button>`;}).join('');
+  const genes=GENES.map(g=>{
+    const inA=!!g.sp[compareSel[0]], inB=!!g.sp[compareSel[1]];
+    return `<span class="cgene ${(inA&&inB)?'both':'one'} ${selectedGene===g.g?'sel':''}" data-cg="${g.g}">${g.g}</span>`;
+  }).join('');
+  const bothN=GENES.filter(g=>g.sp[compareSel[0]]&&g.sp[compareSel[1]]).length;
+  z.innerHTML=`<div class="cb-lab">Pick exactly 2 organisms</div>
+    <div class="spswitch" style="margin-top:7px">${spPills}</div>
+    <div class="legend" style="margin-top:13px"><b style="background:none;color:var(--accent)">${bothN}</b> of ${GENES.length} repair genes are shared between the two. <span style="color:var(--accent)">Solid</span> = in both · faded = in one only. Pick a gene to compare.</div>
+    <div class="cb-lab" style="margin-top:13px">Genes</div>
+    <div class="cb-genes" style="justify-content:flex-start;margin-top:7px">${genes}</div>`;
+  z.querySelectorAll('[data-csp]').forEach(b=>b.addEventListener('click',()=>toggleCompare(b.dataset.csp)));
+  z.querySelectorAll('[data-cg]').forEach(b=>b.addEventListener('click',()=>selectCrossGene(b.dataset.cg)));
+}
+function toggleCompare(sp){
+  if(compareSel.includes(sp)){ if(compareSel.length>1) compareSel=compareSel.filter(x=>x!==sp); }
+  else { compareSel.push(sp); if(compareSel.length>2) compareSel.shift(); }
+  updateLabels(); renderCrossControl();
+  if(selectedGene) selectCrossGene(selectedGene);
+}
+function spCardMini(g,sp){
+  const rec=g.sp[sp];
+  const hd=`<div class="sp-hd"><span class="sp-nm"><i>${SPECIES[sp].n}</i> ${SPECIES[sp].s}</span><span class="sp-kind">${SPECIES[sp].kind}</span></div><div style="font-family:var(--mono);font-size:9.5px;letter-spacing:.04em;color:var(--ink-dim);margin:-3px 0 3px">${SPECIES[sp].lin} · ${SPECIES[sp].dom}</div>`;
+  if(!rec) return `<div class="spcard absent-card">${hd}<div class="absent">No annotated <b>${g.g}</b> by symbol in this genome (${ASM[sp]}). It may be unannotated or renamed — orthogroups give the definitive call.</div></div>`;
+  const tk=toolkit(sp).length;
+  const idDR=(sp!=='DR1'&&g.sp.DR1)?idtFor(g,sp,'DR1'):null;
+  const expr=(sp==='DR1'&&g.expr)
+    ? `<div class="mini-k" style="margin-top:4px">Radiation response (measured)</div><div class="mini-v"><b style="color:var(--accent)">+${g.expr.fc.toFixed(2)}-fold</b> after irradiation · padj ${g.expr.padj}</div>`
+    : `<div class="mini-k" style="margin-top:4px">Radiation response</div><div class="mini-v dim">no RNA-seq for this organism in the atlas</div>`;
+  return `<div class="spcard">${hd}
+    <div class="mini-grid">
+      <div><div class="mini-k">Locus</div><div class="mini-v">${rec.locus}</div></div>
+      <div><div class="mini-k">Length</div><div class="mini-v">${rec.len} bp · ${rec.aa} aa</div></div>
+      <div><div class="mini-k">GC content</div><div class="mini-v">${rec.gc}%</div></div>
+      <div><div class="mini-k">Repair toolkit</div><div class="mini-v">${tk}/${GENES.length} genes</div></div>
+    </div>
+    <div class="mini-k">Survives radiation (measured)</div><div class="mini-v"><b style="color:var(--accent)">${PHENO[sp].short}</b></div>
+    ${SPECIES[sp].distant?`<div class="mini-k" style="margin-top:5px;color:#8a6a1f">⚠ by-symbol undercount</div><div class="mini-v" style="font-size:11.5px;color:#8a6a1f;line-height:1.5">Archaeon — most repair genes are named differently (e.g. <i>radA</i>, not <i>recA</i>), so this ${tk}/${GENES.length} toolkit count is a floor, not evidence it can't repair DNA. Orthogroups are needed to compare archaea fairly.</div>`:''}
+    ${idDR!=null?`<div class="mini-k" style="margin-top:6px">Identity to D. radiodurans</div><div class="mini-v">${idDR}% amino-acid</div>`:''}
+    ${expr}
+    <div class="mini-k" style="margin-top:10px">Coding sequence · 5′</div>
+    <div class="seqblock">${seqHTML(rec.seq.slice(0,SHOWN),SPECIES[sp].n+' · '+rec.locus)}</div></div>`;
+}
+function comparisonInline(g,a,b){
+  const inA=!!g.sp[a], inB=!!g.sp[b];
+  let verdict,detail,idtRow='';
+  if(inA&&inB){
+    verdict='Shared';
+    detail=`Both <i>${SPECIES[a].n}</i> and <i>${SPECIES[b].n}</i> carry <b>${g.g}</b>, so both can run ${g.pathway.toLowerCase()}. A finding about it in one is a reasonable starting point for the other.`;
+    const pid=idtFor(g,a,b);
+    if(pid!=null) idtRow=`<div class="cmp-item"><div class="cmp-k">Amino-acid identity</div>
+      <div class="cmp-v"><b style="color:var(--accent);font-size:19px">${pid}%</b> — ${idtInterp(pid)}</div>
+      <div class="cmp-k" style="margin-top:9px">GC content</div><div class="cmp-v">${SPECIES[a].n.split(' ')[1]} ${g.sp[a].gc}% · ${SPECIES[b].n.split(' ')[1]} ${g.sp[b].gc}%</div></div>`;
+  } else {
+    const has=inA?a:b, miss=inA?b:a; verdict='Lineage-specific';
+    detail=`<b>${g.g}</b> is annotated in <i>${SPECIES[has].n}</i> but not in <i>${SPECIES[miss].n}</i>. ${g.scope==='deino'?'It belongs to the Deinococcus radiation toolkit — the kind of gene that may explain why the survivors survive.':'Absence is by symbol only — worth checking against orthogroups.'}`;
+  }
+  const uA=uniqueTo(a,b), uB=uniqueTo(b,a);
+  const fmt=l=>l.length?'<b>'+l.join(', ')+'</b>':'—';
+  const diff=`<div class="cmp-k" style="margin-top:11px">What each genome has that the other lacks (by symbol)</div>
+    <div class="cmp-v" style="font-size:12.5px">Only in ${SPECIES[a].s}: ${fmt(uA)}<br>Only in ${SPECIES[b].s}: ${fmt(uB)}<br><span style="color:var(--ink-dim)">Present-in-one, absent-in-the-other is exactly what points to candidate resistance genes.</span></div>`;
+  const _dist = SPECIES[a].distant || SPECIES[b].distant;
+  const _archName = SPECIES[a].distant ? SPECIES[a].n : SPECIES[b].n;
+  const _trackLine = _dist
+    ? `Careful here: ${_archName} is an archaeon, and archaea name most repair genes differently (e.g. <i>radA</i>, not <i>recA</i>). Its low by-symbol count is an annotation artifact, <b>not</b> evidence it lacks repair — it survives huge doses. Archaea must be compared with the pipeline's orthogroups, not symbols.`
+    : `Among comparably-annotated bacteria, a bigger repair toolkit tracks with surviving more radiation — the genes lining up with observable behavior.`;
+  const phenoRow=`<div class="cmp-k" style="margin-top:11px">Repair toolkit &amp; real survival (the genetics vs the behavior)</div>
+    <div class="cmp-v" style="font-size:12.5px"><i>${SPECIES[a].n}</i> <span style="color:var(--ink-dim)">(${SPECIES[a].lin})</span>: <b>${toolkit(a).length}/${GENES.length}</b> repair genes · survives <b style="color:var(--accent)">${PHENO[a].short}</b><br><i>${SPECIES[b].n}</i> <span style="color:var(--ink-dim)">(${SPECIES[b].lin})</span>: <b>${toolkit(b).length}/${GENES.length}</b> · survives <b style="color:var(--accent)">${PHENO[b].short}</b><br><span style="color:${_dist?'#8a6a1f':'var(--ink-dim)'}">${_trackLine}</span></div>`;
+  const idExplain=(inA&&inB)?xsec('What amino-acid identity means','identity'):'';
+  return `<div class="cmpcard"><div class="cmp-hd">Comparison — ${verdict}</div>
+    <div class="cmp-row">
+      <div class="cmp-item"><div class="cmp-k">What's the same / different</div><div class="cmp-v">${detail}</div>
+        <div class="cmp-k" style="margin-top:9px">Shared pathway</div><div class="cmp-v">${g.pathway}</div></div>
+      ${idtRow}
+    </div>
+    ${idExplain}
+    ${phenoRow}
+    ${diff}
+    <div class="cando">
+      <div><div class="cmp-k" style="color:#1c6376">✓ What this tells you</div><div class="cmp-v" style="font-size:12.5px">Both can perform ${g.pathway.toLowerCase()}; how conserved the gene is (identity); which repair genes are unique to each; and how that lines up with measured survival.</div></div>
+      <div><div class="cmp-k" style="color:#8a6a1f">✕ What it can't (yet)</div><div class="cmp-v" style="font-size:12.5px">Which organism uses the gene more, or whose version performs better — that needs per-species RNA-seq and biochemistry.</div></div>
+    </div>
+    ${xsec('The reasoning — and its limits','tells')}
+    <div class="cmp-note">Presence by annotated symbol per RefSeq assembly · sequences are 5′ coding windows, not residue-aligned · identity is global amino-acid alignment · survival doses from published literature · definitive orthology comes from the pipeline's orthogroups.</div></div>`;
+}
+function selectCrossGene(name){
+  const g=GENES.find(x=>x.g===name); if(!g)return; selectedGene=name;
+  const [a,b]=compareSel; const recA=g.sp[a], recB=g.sp[b];
+  if(THREE_OK){spin('A');spin('B');colorHelix(helixA,null);colorHelix(helixB,null);
+    setTimeout(()=>{colorHelix(helixA,recA?recA.seq:null);colorHelix(helixB,recB?recB.seq:null);},740);}
+  document.getElementById('rightTitle').textContent='Comparison · '+g.g;
+  document.getElementById('rightBody').innerHTML=
+    `<div class="cmp-gene"><span class="d-gene scramble" id="dGene" style="font-size:25px">${g.g}</span><span class="d-scope ${g.scope}">${g.scope==='deino'?'Deinococcus-lineage':'broadly conserved'}</span><div class="d-role" style="margin-top:7px">${g.role}</div></div>`
+    + spCardMini(g,a) + spCardMini(g,b) + comparisonInline(g,a,b);
+  openP('right',true); renderCrossControl();
+  scrambleEl(document.getElementById('dGene'),g.g,500);
+}
+
+/* ---------- function constellation ---------- */
+function buildConstellation(){
+  const inner=document.getElementById('constInner');inner.innerHTML='';const n=GENES.length;
+  GENES.forEach((g,i)=>{const ang=(i/n)*Math.PI*2-Math.PI/2,x=50+Math.cos(ang)*44,y=50+Math.sin(ang)*44;
+    const el=document.createElement('div');el.className='node';el.dataset.g=g.g;el.textContent=g.g;
+    el.style.left=x+'%';el.style.top=y+'%';el.addEventListener('click',()=>selectGene(g.g));inner.appendChild(el);});
+}
+function paintConstellation(matchList,selName){
+  document.querySelectorAll('#constInner .node').forEach(nd=>{const g=nd.dataset.g;nd.classList.remove('match','dim');
+    if(selName)nd.classList.toggle('match',g===selName);
+    else if(matchList){matchList.includes(g)?nd.classList.add('match'):nd.classList.add('dim');}});
+}
+
+/* ---------- expression ---------- */
+function buildExprHero(){
+  const w=GENES.filter(g=>g.expr).sort((a,b)=>b.expr.fc-a.expr.fc);const max=Math.max(...w.map(g=>g.expr.fc));
+  document.getElementById('exprHero').innerHTML=`
+    <div class="ex-env"><div class="t">Irradiation induction · D. radiodurans R1</div>
+      <div class="c">Environment: ionizing radiation, ~10 kGy, post-irradiation recovery · source GSE176207 (3 treated vs 3 control)<br>Values = log₂ fold-change, treated vs untreated · "mean" = DESeq2 normalized read depth</div></div>
+    ${w.map(g=>`<div class="ex-row" data-g="${g.g}"><div class="ex-g">${g.g}</div>
+      <div class="ex-track"><div class="ex-fill" data-w="${(g.expr.fc/max*100).toFixed(0)}"></div></div>
+      <div class="ex-fc">+${g.expr.fc.toFixed(2)}</div><div class="ex-pj">padj ${g.expr.padj}</div>
+      <div class="ex-bm">mean ~${g.expr.base||'—'}</div></div>`).join('')}
+    <div class="ex-foot">Only D. radiodurans has a replicated radiation RNA-seq series in this atlas. D. deserti / D. gobiensis / E. coli: no expression series loaded — their induction would come from their own RNA-seq.<br>None of these clear padj &lt; 0.05 on this depth-limited series; shown as measured, not relabeled.</div>`;
+  document.querySelectorAll('#exprHero .ex-row').forEach(r=>r.addEventListener('click',()=>{mode='lookup';/* keep expr view */ selectGene(r.dataset.g);openP('right',true);}));
+}
+function animateExpr(){document.querySelectorAll('#exprHero .ex-fill').forEach((el,i)=>setTimeout(()=>el.style.width=el.dataset.w+'%',80+i*70));}
+
+const GLYPH='ATGC▸▾01│─';
+function scrambleEl(el,final,dur){if(!el)return;const s=performance.now();
+  (function tick(now){const p=Math.min(1,(now-s)/dur),rv=Math.floor(p*final.length);let o='';
+    for(let i=0;i<final.length;i++)o+= i<rv?final[i]:GLYPH[Math.floor(Math.random()*GLYPH.length)];
+    el.textContent=o;if(p<1)requestAnimationFrame(tick);else el.textContent=final;})(s);}
+
+function openP(side,on){document.getElementById(side==='left'?'leftPanel':'rightPanel').classList.toggle('hide',!on);}
+function setStatus(){document.getElementById('status').innerHTML=`<b>${GENES.length}</b> anchor genes · <b>4</b> real RefSeq genomes · <b>${GENES.filter(g=>g.expr).length}</b> with DESeq2 values · sequences from NCBI RefSeq`;}
+
+function setMode(m){
+  mode=m; document.body.setAttribute('data-mode',m);
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.mode===m));
+  document.getElementById('cmpPanel').classList.remove('show');
+  document.getElementById('rightTitle').textContent='Gene detail';
+  document.getElementById('leftTitle').textContent= m==='func'?'Function':'Search';
+  layoutScene();
+  if(m!=='cross'&&m!=='expr') renderLeft();
+  if(m==='func') paintConstellation(GENES.map(g=>g.g));
+  setStatus(); showIntro();
+}
+
+document.getElementById('nav').addEventListener('click',e=>{const b=e.target.closest('.tab');if(b)setMode(b.dataset.mode);});
+document.getElementById('intro').addEventListener('click',e=>{if(e.target.id==='intro')enterMode();});
+document.getElementById('caption').addEventListener('click',showIntro);
+document.getElementById('toggleLeft').addEventListener('click',()=>openP('left',document.getElementById('leftPanel').classList.contains('hide')));
+document.getElementById('toggleRight').addEventListener('click',()=>openP('right',document.getElementById('rightPanel').classList.contains('hide')));
+document.querySelectorAll('[data-close]').forEach(x=>x.addEventListener('click',()=>openP(x.dataset.close,false)));
+addEventListener('keydown',e=>{if(e.key==='Enter'&&introOpen)enterMode();});
+document.addEventListener('click',e=>{const h=e.target.closest('.d-sec.expandable');if(!h)return;const ex=h.nextElementSibling;if(ex&&ex.classList.contains('d-explain')){const open=ex.classList.toggle('open');const c=h.querySelector('.chev');if(c)c.textContent=open?'－':'＋';}});
+
+initThree();buildConstellation();buildExprHero();setMode('lookup');
+</script>
+</body>
+</html>
