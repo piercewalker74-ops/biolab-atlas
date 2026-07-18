@@ -10,6 +10,20 @@ data, and plain-language explanations of what each repair factor does.
 
 <https://biolab-atlas-deploy.vercel.app/>
 
+## Screenshots
+
+The cinematic hero — a *D. radiodurans* chromosome caught mid-repair:
+
+![Hero — the repair engine](media/01-hero.png)
+
+The BioLab Workspace — genes, conservation, expression, and literature side by side:
+
+![Workspace dashboard](media/02-workspace.png)
+
+The cross-species tool — comparing a repair gene between two organisms' real sequences:
+
+![Cross-species comparison](media/03-cross-species.png)
+
 ## Running locally
 
 It's a fully static site — no build step, no dependencies. Serve the folder with
